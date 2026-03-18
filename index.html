@@ -7,226 +7,81 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --ink: #1a1a2e;
-  --ink-mid: #4a4a6a;
-  --ink-light: #8a8aaa;
-  --paper: #f7f6f1;
-  --paper-2: #eeeae0;
-  --gold: #c9a84c;
-  --crimson: #c0392b;
-  --crimson-light: #fde8e6;
-  --border: rgba(26,26,46,0.12);
-  --bg: #f7f6f1;
-  --surface: #ffffff;
+  --ink: #1a1a2e; --ink-mid: #4a4a6a; --ink-light: #8a8aaa;
+  --paper: #f7f6f1; --paper-2: #eeeae0; --gold: #c9a84c;
+  --crimson: #c0392b; --crimson-light: #fde8e6;
+  --border: rgba(26,26,46,0.12); --bg: #f7f6f1; --surface: #ffffff;
 }
-
-body {
-  background: var(--bg);
-  font-family: 'Syne', sans-serif;
-  color: var(--ink);
-  min-height: 100vh;
-  padding: 2rem 1rem;
-}
-
-.app { max-width: 880px; margin: 0 auto; }
-
-.header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1.5px solid var(--border);
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.header-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 28px;
-  font-weight: 400;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-
+body { background: var(--bg); font-family: 'Syne', sans-serif; color: var(--ink); min-height: 100vh; padding: 2rem 1rem; }
+.app { max-width: 900px; margin: 0 auto; }
+.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1.5px solid var(--border); gap: 1rem; flex-wrap: wrap; }
+.header-title { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; letter-spacing: -0.5px; line-height: 1.2; }
 .header-title span { color: var(--gold); font-style: italic; }
-
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-
-.header-sub {
-  font-size: 12px;
-  color: var(--ink-light);
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.05em;
-}
-
-.sync-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-family: 'DM Mono', monospace;
-  color: var(--ink-light);
-}
-
-.sync-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ccc;
-  transition: background 0.3s;
-}
-
-.sync-dot.online  { background: #27ae60; }
-.sync-dot.offline { background: #e74c3c; }
+.header-sub { font-size: 12px; color: var(--ink-light); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+.sync-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--ink-light); }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
+.sync-dot.online { background: #27ae60; } .sync-dot.offline { background: #e74c3c; }
 .sync-dot.syncing { background: var(--gold); animation: pulse 1s infinite; }
-
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-.tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 1.5rem;
-  background: var(--paper-2);
-  padding: 4px;
-  border-radius: 10px;
-}
-
-.tab {
-  flex: 1;
-  padding: 9px 12px;
-  border: none;
-  background: transparent;
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink-mid);
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
+.tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; background: var(--paper-2); padding: 4px; border-radius: 10px; overflow-x: auto; }
+.tab { flex: 1; padding: 9px 12px; border: none; background: transparent; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-mid); border-radius: 7px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .tab.active { background: var(--ink); color: #fff; }
-
-.section { display: none; }
-.section.active { display: block; }
-
-.form-card {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.form-card-title {
-  font-size: 11px;
-  font-family: 'DM Mono', monospace;
-  color: var(--ink-light);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-
+.section { display: none; } .section.active { display: block; }
+.form-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.form-card-title { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--ink-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .field-row.single { grid-template-columns: 1fr; }
-
 .field label { display: block; font-size: 12px; color: var(--ink-mid); margin-bottom: 5px; font-weight: 500; }
-
-.field input, .field select, .field textarea {
-  width: 100%;
-  padding: 8px 10px;
-  border: 0.5px solid var(--border);
-  border-radius: 7px;
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  color: var(--ink);
-  background: var(--paper);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
+.field input, .field select, .field textarea { width: 100%; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: 7px; font-family: 'Syne', sans-serif; font-size: 13px; color: var(--ink); background: var(--paper); outline: none; transition: border-color 0.2s; }
 .field textarea { resize: vertical; min-height: 60px; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); background: #fff; }
-
+.radio-group { display: flex; flex-direction: column; gap: 7px; margin-top: 6px; }
+.radio-item { display: flex; align-items: flex-start; gap: 8px; }
+.radio-item input[type=radio] { margin-top: 3px; accent-color: var(--ink); width: 14px; height: 14px; flex-shrink: 0; cursor: pointer; }
+.radio-item span { font-size: 12px; color: var(--ink-mid); line-height: 1.5; cursor: pointer; }
+.radio-inline { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+.radio-inline .radio-item { align-items: center; }
+.radio-inline .radio-item input[type=radio] { margin-top: 0; }
+.sub-field { margin-top: 14px; }
+.sub-field label { display: block; font-size: 12px; color: var(--ink-mid); margin-bottom: 4px; font-weight: 500; line-height: 1.4; }
 .slider-field { margin-bottom: 14px; }
 .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
 .slider-label { font-size: 12px; font-weight: 500; color: var(--ink-mid); }
 .slider-value { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; min-width: 28px; text-align: right; color: var(--ink); }
 .slider-desc { font-size: 11px; color: var(--ink-light); margin-bottom: 5px; }
-
 input[type=range] { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--paper-2); outline: none; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); cursor: pointer; }
 input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--ink); cursor: pointer; border: none; }
-
-.btn-primary {
-  width: 100%;
-  padding: 13px;
-  background: var(--ink);
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 0.5rem;
-  transition: opacity 0.2s;
-}
-.btn-primary:hover { opacity: 0.85; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-secondary {
-  padding: 8px 16px;
-  background: transparent;
-  color: var(--ink);
-  border: 0.5px solid var(--border);
-  border-radius: 7px;
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+.btn-primary { width: 100%; padding: 13px; background: var(--ink); color: #fff; border: none; border-radius: 9px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: opacity 0.2s; }
+.btn-primary:hover { opacity: 0.85; } .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { padding: 8px 16px; background: transparent; color: var(--ink); border: 0.5px solid var(--border); border-radius: 7px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .btn-secondary:hover { background: var(--paper-2); }
-
 .priority-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-family: 'DM Mono', monospace; font-weight: 500; }
-.priority-critica { background: #fde8e6; color: #a93226; }
-.priority-alta    { background: #fef3d0; color: #9a6c00; }
-.priority-media   { background: #d0ede8; color: #1a6b5e; }
-.priority-baja    { background: #ededf5; color: #5a5a8a; }
-
+.priority-critica { background: #fde8e6; color: #a93226; } .priority-alta { background: #fef3d0; color: #9a6c00; }
+.priority-media { background: #d0ede8; color: #1a6b5e; } .priority-baja { background: #ededf5; color: #5a5a8a; }
 .asset-list { display: flex; flex-direction: column; gap: 10px; }
-
-.asset-card {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  transition: border-color 0.2s;
-}
+.asset-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; transition: border-color 0.2s; }
 .asset-card:hover { border-color: var(--gold); }
-
 .asset-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
 .asset-name { font-weight: 600; font-size: 14px; color: var(--ink); }
 .asset-type { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--ink-light); margin-top: 2px; }
 .asset-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .score-pill { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ink); background: var(--paper-2); padding: 3px 10px; border-radius: 20px; }
-.asset-metrics { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.asset-metrics { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
 .metric-mini { font-size: 11px; color: var(--ink-light); }
 .metric-mini span { color: var(--ink-mid); font-weight: 500; }
-
+.asset-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.tag-pill { font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 4px; background: var(--paper-2); color: var(--ink-mid); }
+.prot-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-family: 'DM Mono', monospace; font-weight: 500; }
+.prot-no { background: #fde8e6; color: #a93226; } .prot-pendiente { background: #fef3d0; color: #9a6c00; } .prot-solicitada { background: #d0ede8; color: #1a6b5e; }
 .asset-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); }
 .action-btn { padding: 5px 12px; background: transparent; border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; font-family: 'Syne', sans-serif; font-weight: 500; cursor: pointer; color: var(--ink-mid); transition: all 0.15s; }
 .action-btn:hover { background: var(--paper-2); color: var(--ink); }
 .action-btn.danger:hover { background: var(--crimson-light); color: var(--crimson); border-color: var(--crimson); }
-
 .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-light); }
-.empty-icon { font-size: 36px; margin-bottom: 0.75rem; opacity: 0.4; }
-.empty-text { font-size: 14px; line-height: 1.6; }
-
+.empty-icon { font-size: 36px; margin-bottom: 0.75rem; opacity: 0.4; } .empty-text { font-size: 14px; line-height: 1.6; }
 .matrix-wrapper { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
 .matrix-title { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--ink-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
 .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 90px); gap: 4px; }
@@ -236,160 +91,225 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 .cell-asset-tag { background: rgba(255,255,255,0.65); border-radius: 4px; padding: 2px 5px; font-size: 9px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .matrix-labels { display: flex; justify-content: space-between; margin-top: 6px; padding: 0 2px; }
 .matrix-axis-x { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--ink-light); }
-
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
 .stat-card { background: var(--paper-2); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; }
 .stat-num { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--ink); }
 .stat-label { font-size: 10px; color: var(--ink-light); margin-top: 2px; }
-
 .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
 .filter-label { font-size: 12px; color: var(--ink-light); font-family: 'DM Mono', monospace; }
 .filter-btn { padding: 5px 12px; background: transparent; border: 0.5px solid var(--border); border-radius: 20px; font-size: 11px; cursor: pointer; font-family: 'Syne', sans-serif; color: var(--ink-mid); transition: all 0.15s; }
 .filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
 .filter-btn:hover:not(.active) { background: var(--paper-2); }
-
 .recom-card { background: var(--surface); border: 0.5px solid var(--border); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; padding: 1rem 1.25rem; margin-bottom: 10px; }
 .recom-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .recom-name { font-size: 14px; font-weight: 600; }
 .recom-actions-list { list-style: none; margin-top: 8px; }
 .recom-actions-list li { font-size: 12px; color: var(--ink-mid); padding: 3px 0 3px 16px; position: relative; line-height: 1.5; }
 .recom-actions-list li::before { content: "→"; position: absolute; left: 0; color: var(--gold); }
-
 .urgency-tag { font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
-.urgency-inmediata { background: #fde8e6; color: #a93226; }
-.urgency-corto     { background: #fef3d0; color: #9a6c00; }
-.urgency-medio     { background: #d0ede8; color: #1a6b5e; }
-
+.urgency-inmediata { background: #fde8e6; color: #a93226; } .urgency-corto { background: #fef3d0; color: #9a6c00; } .urgency-medio { background: #d0ede8; color: #1a6b5e; }
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.5); z-index: 1000; align-items: center; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal-box { background: var(--surface); border-radius: 14px; padding: 1.5rem; max-width: 540px; width: 90vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(26,26,46,0.2); }
+.modal-box { background: var(--surface); border-radius: 14px; padding: 1.5rem; max-width: 600px; width: 90vw; max-height: 88vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(26,26,46,0.2); }
 .modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--border); }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
-.detail-item-label { font-size: 11px; color: var(--ink-light); margin-bottom: 3px; font-family: 'DM Mono', monospace; }
-.detail-item-value { font-size: 13px; font-weight: 500; color: var(--ink); }
+.modal-section { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--ink-light); letter-spacing: 0.08em; text-transform: uppercase; margin: 1rem 0 0.5rem; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0.5rem; }
+.di-label { font-size: 11px; color: var(--ink-light); margin-bottom: 3px; font-family: 'DM Mono', monospace; }
+.di-value { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; }
 .score-bar-wrap { margin-bottom: 10px; }
 .score-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 4px; }
 .score-bar-track { height: 6px; background: var(--paper-2); border-radius: 3px; overflow: hidden; }
 .score-bar-fill { height: 100%; border-radius: 3px; background: var(--ink); }
-
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--ink);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: 'DM Mono', monospace;
-  z-index: 2000;
-  transition: transform 0.3s;
-  white-space: nowrap;
-}
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-family: 'DM Mono', monospace; z-index: 2000; transition: transform 0.3s; white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
-.loading-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 1rem;
-  flex-direction: column;
-  gap: 1rem;
-  color: var(--ink-light);
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-}
-
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--paper-2);
-  border-top-color: var(--ink);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
+.loading-screen { display: flex; align-items: center; justify-content: center; padding: 4rem 1rem; flex-direction: column; gap: 1rem; color: var(--ink-light); font-family: 'DM Mono', monospace; font-size: 13px; }
+.spinner { width: 28px; height: 28px; border: 2px solid var(--paper-2); border-top-color: var(--ink); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .no-assets-msg { font-size: 13px; color: var(--ink-light); padding: 2rem; text-align: center; font-style: italic; }
-
 @media (max-width: 560px) {
   .stats-row { grid-template-columns: 1fr 1fr; }
   .field-row { grid-template-columns: 1fr; }
   .matrix-grid { grid-template-rows: repeat(3, 70px); }
-  .tabs { overflow-x: auto; }
-  .tab { white-space: nowrap; font-size: 11px; }
   .header-title { font-size: 22px; }
+  .detail-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="header">
-    <div>
-      <div class="header-title">Activos <span>Intangibles</span><br>Protección IP</div>
-    </div>
+    <div><div class="header-title">Activos <span>Intangibles</span><br>Protección IP</div></div>
     <div class="header-right">
       <div class="header-sub">OPERADORA AVÍCOLA COLOMBIA S.A.S.</div>
-      <div class="sync-status">
-        <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-label">Conectando...</span>
-      </div>
+      <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Conectando...</span></div>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('registro')">+ Registrar activo</button>
+    <button class="tab active" onclick="switchTab('registro')">+ Registrar</button>
     <button class="tab" onclick="switchTab('inventario')">Inventario</button>
     <button class="tab" onclick="switchTab('matriz')">Matriz</button>
     <button class="tab" onclick="switchTab('recomendaciones')">Recomendaciones</button>
   </div>
 
-  <!-- TAB: REGISTRO -->
+  <!-- REGISTRO -->
   <div id="tab-registro" class="section active">
+
     <div class="form-card">
       <div class="form-card-title">Identificación del activo</div>
       <div class="field-row">
-        <div class="field">
-          <label>Nombre del activo *</label>
-          <input type="text" id="f-nombre" placeholder="Ej: Algoritmo de recomendación v2">
-        </div>
-        <div class="field">
-          <label> Mecanismo de protección*</label>
+        <div class="field"><label>Nombre del activo *</label><input type="text" id="f-nombre" placeholder="Ej: Fórmula de alimento balanceado v3"></div>
+        <div class="field"><label>Mecanismo de protección *</label>
           <select id="f-tipo">
             <option value="">Seleccionar...</option>
-            <option value="Patente">Patente</option>
-            <option value="Secreto industrial">Secreto Industrial</option>
-            <option value="Derechos de autor">Derechos de autor</option>
-            <option value="Marca / nombre"> Marca </option>
-            <option value="Diseño industrial">Diseño industrial</option>
-            <option value="Modelo de utilidad">Modelo de utilidad</option>
-
+            <option>Patente</option><option>Modelo de Utilidad</option>
+            <option>Derechos de autor</option><option>Diseño Industrial</option>
+            <option>Secreto industrial</option><option>Marca</option>
           </select>
         </div>
       </div>
-      <div class="field-row single">
-        <div class="field">
-          <label>Descripción breve</label>
-          <textarea id="f-desc" placeholder="Describe brevemente el activo y su función..."></textarea>
+      <div class="field-row single"><div class="field"><label>Descripción breve</label><textarea id="f-desc" placeholder="Describe brevemente el activo y su función..."></textarea></div></div>
+      <div class="field-row">
+        <div class="field"><label>Área / Departamento</label><input type="text" id="f-area" placeholder="Ej: I+D, Producción, Operaciones"></div>
+        <div class="field"><label>Responsable</label><input type="text" id="f-resp" placeholder="Nombre o cargo"></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Tipo de tecnología obtenida</div>
+      <div class="field"><label>¿Cómo clasificarías este activo?</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Máquina"><span>¿Es una máquina?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Software o sistema"><span>¿Es un software o sistema?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Metodología o procedimiento"><span>¿Es una metodología o procedimiento?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Símbolo o signo distintivo"><span>¿Es un símbolo o signo distintivo?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Diseño industrial"><span>¿Es un diseño industrial?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Esquema de circuito integrado"><span>¿Es un esquema de circuito integrado?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Base de datos con información valiosa"><span>¿Es una base de datos con información valiosa?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Programa de ordenador"><span>¿Es un programa de ordenador?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Descubrimiento"><span>¿Es un descubrimiento?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Teoría científica"><span>¿Es una teoría científica?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Obra literaria o artística"><span>¿Es una obra literaria o artística?</span></label>
+          <label class="radio-item"><input type="radio" name="f-tecno" value="Juego"><span>¿Es un juego?</span></label>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Área / Departamento</label>
-          <input type="text" id="f-area" placeholder="Ej: I+D, Marketing, Ops">
-        </div>
-        <div class="field">
-          <label>Responsable</label>
-          <input type="text" id="f-resp" placeholder="Nombre o cargo">
+      <div class="sub-field"><label>¿El activo está protegido actualmente?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-protegido" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-protegido" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-protegido" value="En proceso"><span>En proceso</span></label>
         </div>
       </div>
     </div>
 
     <div class="form-card">
-      <div class="form-card-title">Criterios de evaluación (0–10)</div>
+      <div class="form-card-title">Estado de alistamiento tecnológico (TRL)</div>
+      <div class="field"><label>Nivel de madurez tecnológica</label>
+        <select id="f-trl" style="margin-top:6px;">
+          <option value="">Seleccionar nivel TRL...</option>
+          <option value="TRL 1">TRL 1 — Principios básicos observados y reportados</option>
+          <option value="TRL 2">TRL 2 — Conceptos de aplicación formulados</option>
+          <option value="TRL 3">TRL 3 — Prueba de concepto y funciones críticas</option>
+          <option value="TRL 4">TRL 4 — Componentes para validar en laboratorio</option>
+          <option value="TRL 5">TRL 5 — Componentes para validar en entorno real</option>
+          <option value="TRL 6">TRL 6 — Demostración en ambiente real</option>
+          <option value="TRL 7">TRL 7 — Prototipo para solución confiable</option>
+          <option value="TRL 8">TRL 8 — Sistema completo</option>
+          <option value="TRL 9">TRL 9 — Sistema completo articulado a otros sistemas</option>
+          <option value="Sin determinar">Sin determinar</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Titularidad</div>
+      <div class="sub-field"><label>Origen del desarrollo</label>
+        <div class="radio-group" style="margin-top:8px;">
+          <label class="radio-item"><input type="radio" name="f-titularidad" value="Desarrollo propio"><span>Desarrollo propio</span></label>
+          <label class="radio-item"><input type="radio" name="f-titularidad" value="Desarrollado totalmente por un tercero"><span>¿El activo fue desarrollado totalmente por un tercero?</span></label>
+          <label class="radio-item"><input type="radio" name="f-titularidad" value="Desarrollo en asociación con un tercero"><span>¿El activo fue desarrollado en asociación con un tercero?</span></label>
+        </div>
+      </div>
+      <div class="sub-field"><label>¿Cuenta con acuerdos de no divulgación (NDA) de información confidencial?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-nda" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-nda" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-nda" value="En proceso"><span>En proceso</span></label>
+        </div>
+      </div>
+      <div class="sub-field"><label>¿Controla el acceso a la información confidencial del activo?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-acceso" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-acceso" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-acceso" value="Parcialmente"><span>Parcialmente</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Protección jurídica</div>
+      <div class="sub-field"><label>¿Existe un acuerdo de Propiedad Intelectual (PI) asociado a esta tecnología?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-acuerdopi" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-acuerdopi" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-acuerdopi" value="No aplica"><span>No aplica</span></label>
+        </div>
+      </div>
+      <div class="sub-field"><label>Estado de la protección</label>
+        <div class="radio-group" style="margin-top:8px;">
+          <label class="radio-item"><input type="radio" name="f-estadoprot" value="No susceptible de protección"><span>No susceptible de protección</span></label>
+          <label class="radio-item"><input type="radio" name="f-estadoprot" value="Pendiente de solicitud"><span>Pendiente de solicitud</span></label>
+          <label class="radio-item"><input type="radio" name="f-estadoprot" value="Protección solicitada"><span>Protección solicitada</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Derechos de explotación</div>
+      <div class="sub-field"><label>¿Se poseen los derechos de explotación de la tecnología?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-derechos" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-derechos" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-derechos" value="Parcialmente"><span>Parcialmente</span></label>
+        </div>
+      </div>
+      <div class="sub-field"><label>¿Ha otorgado o planea otorgar derechos a terceros sobre la tecnología?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-otorgado" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-otorgado" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-otorgado" value="En evaluación"><span>En evaluación</span></label>
+        </div>
+      </div>
+      <div class="sub-field"><label>¿Dispone de un contrato, licencia u acuerdo jurídico para que terceros accedan al activo?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-contrato" value="Sí"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-contrato" value="No"><span>No</span></label>
+          <label class="radio-item"><input type="radio" name="f-contrato" value="No aplica"><span>No aplica</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Valoración de la tecnología</div>
+      <div class="sub-field"><label>¿Se han llevado a cabo ejercicios de valoración de la tecnología?</label>
+        <div class="radio-inline">
+          <label class="radio-item"><input type="radio" name="f-valorada" value="Sí" onchange="toggleMetodo(true)"><span>Sí</span></label>
+          <label class="radio-item"><input type="radio" name="f-valorada" value="No" onchange="toggleMetodo(false)"><span>No</span></label>
+        </div>
+      </div>
+      <div class="sub-field" id="f-metodo-wrap" style="display:none;">
+        <label>¿Mediante cuál método está valorado?</label>
+        <select id="f-metodo" style="margin-top:6px;">
+          <option value="">Seleccionar método...</option>
+          <option>Método de costo</option><option>Método de mercado</option>
+          <option>Método de ingresos</option><option>Método de opciones reales</option>
+          <option>Método de regalías (Relief from Royalty)</option><option>Otro método</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Criterios de evaluación para score (0–10)</div>
       <div class="slider-field">
         <div class="slider-header"><span class="slider-label">Valor comercial</span><span class="slider-value" id="v-comercial">5</span></div>
         <div class="slider-desc">Potencial de ingresos o ahorro de costos</div>
@@ -425,21 +345,21 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
     <button class="btn-primary" id="btn-agregar" onclick="agregarActivo()">Evaluar y agregar al inventario</button>
   </div>
 
-  <!-- TAB: INVENTARIO -->
+  <!-- INVENTARIO -->
   <div id="tab-inventario" class="section">
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">Total activos</div></div>
       <div class="stat-card"><div class="stat-num" id="st-criticos">0</div><div class="stat-label">Prioridad crítica</div></div>
       <div class="stat-card"><div class="stat-num" id="st-score">—</div><div class="stat-label">Score promedio</div></div>
-      <div class="stat-card"><div class="stat-num" id="st-tipos">0</div><div class="stat-label">Tipos distintos</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-tipos">0</div><div class="stat-label">Mecanismos distintos</div></div>
     </div>
     <div class="filter-row">
       <span class="filter-label">Filtrar:</span>
-      <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
-      <button class="filter-btn" onclick="setFilter('Crítica', this)">Crítica</button>
-      <button class="filter-btn" onclick="setFilter('Alta', this)">Alta</button>
-      <button class="filter-btn" onclick="setFilter('Media', this)">Media</button>
-      <button class="filter-btn" onclick="setFilter('Baja', this)">Baja</button>
+      <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFilter('Crítica',this)">Crítica</button>
+      <button class="filter-btn" onclick="setFilter('Alta',this)">Alta</button>
+      <button class="filter-btn" onclick="setFilter('Media',this)">Media</button>
+      <button class="filter-btn" onclick="setFilter('Baja',this)">Baja</button>
       <div style="margin-left:auto;display:flex;gap:8px;">
         <button class="btn-secondary" onclick="exportCSV()">Exportar CSV</button>
         <button class="btn-secondary" style="background:var(--ink);color:#fff;border-color:var(--ink);" onclick="exportSnapshot()">Compartir snapshot</button>
@@ -450,11 +370,11 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
     </div>
   </div>
 
-  <!-- TAB: MATRIZ -->
+  <!-- MATRIZ -->
   <div id="tab-matriz" class="section">
     <div class="matrix-wrapper">
       <div class="matrix-title">Matriz valor comercial × riesgo de replicación</div>
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex;gap:8px;">
         <div style="display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;font-family:'DM Mono',monospace;color:var(--ink-light);letter-spacing:0.05em;padding-right:4px;white-space:nowrap;">VALOR COMERCIAL ↑</div>
         <div style="flex:1;">
           <div class="matrix-grid" id="matrix-grid"></div>
@@ -473,7 +393,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
     </div>
   </div>
 
-  <!-- TAB: RECOMENDACIONES -->
+  <!-- RECOMENDACIONES -->
   <div id="tab-recomendaciones" class="section">
     <div id="recom-list"><div class="no-assets-msg">Cargando...</div></div>
   </div>
@@ -482,228 +402,161 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal-box" id="modal-box"></div>
 </div>
-
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDKs (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-/* ============================================================
-   CONFIGURACIÓN FIREBASE — no edites esta sección
-   ============================================================ */
 const firebaseConfig = {
-  apiKey:            "AIzaSyA44PZJuJjmHCok6ZYN3D4nXK0tVNpRBIo",
-  authDomain:        "evaluador-activos.firebaseapp.com",
-  databaseURL:       "https://evaluador-activos-default-rtdb.firebaseio.com",
-  projectId:         "evaluador-activos",
-  storageBucket:     "evaluador-activos.firebasestorage.app",
+  apiKey: "AIzaSyA44PZJuJjmHCok6ZYN3D4nXK0tVNpRBIo",
+  authDomain: "evaluador-activos.firebaseapp.com",
+  databaseURL: "https://evaluador-activos-default-rtdb.firebaseio.com",
+  projectId: "evaluador-activos",
+  storageBucket: "evaluador-activos.firebasestorage.app",
   messagingSenderId: "1040275416113",
-  appId:             "1:1040275416113:web:0f846d5f6f33571f842110"
+  appId: "1:1040275416113:web:0f846d5f6f33571f842110"
 };
-
 firebase.initializeApp(firebaseConfig);
-const db  = firebase.database();
+const db = firebase.database();
 const ref = db.ref('activos');
 
-/* ============================================================
-   CONFIGURACIÓN PRINCIPAL — edita aquí fácilmente
-   ============================================================ */
-const WEIGHTS = {
-  comercial:  0.30,
-  ventaja:    0.20,
-  innovacion: 0.20,
-  secreto:    0.15,
-  riesgo:     0.10,
-  madurez:    0.05
-};
+const WEIGHTS = { comercial:0.30, ventaja:0.20, innovacion:0.20, secreto:0.15, riesgo:0.10, madurez:0.05 };
+const PRIORIDAD = { critica:8, alta:6, media:4 };
 
-const PRIORIDAD = { critica: 8, alta: 6, media: 4 };
-
-/* ============================================================ */
-
-let assets      = [];
+let assets = [];
 let activeFilter = 'todos';
 
-// Indicador de conexión
 db.ref('.info/connected').on('value', snap => {
-  const dot   = document.getElementById('sync-dot');
-  const label = document.getElementById('sync-label');
-  if (snap.val()) {
-    dot.className = 'sync-dot online';
-    label.textContent = 'En línea · sincronizado';
-  } else {
-    dot.className = 'sync-dot offline';
-    label.textContent = 'Sin conexión';
-  }
+  const dot = document.getElementById('sync-dot'), label = document.getElementById('sync-label');
+  if (snap.val()) { dot.className='sync-dot online'; label.textContent='En línea · sincronizado'; }
+  else { dot.className='sync-dot offline'; label.textContent='Sin conexión'; }
 });
 
-// Escuchar cambios en tiempo real
 ref.on('value', snap => {
   const data = snap.val();
-  assets = data ? Object.entries(data).map(([id, v]) => ({ ...v, id })) : [];
-  assets.sort((a, b) => b.score - a.score);
+  assets = data ? Object.entries(data).map(([id,v]) => ({...v,id})) : [];
+  assets.sort((a,b) => b.score - a.score);
   updateAll();
 });
 
-/* ---------- Lógica de cálculo ---------- */
-
 function calcScore(a) {
-  return Math.round(
-    a.comercial  * WEIGHTS.comercial  +
-    a.ventaja    * WEIGHTS.ventaja    +
-    a.secreto    * WEIGHTS.secreto    +
-    a.innovacion * WEIGHTS.innovacion +
-    a.riesgo     * WEIGHTS.riesgo     +
-    a.madurez    * WEIGHTS.madurez
-  );
+  return Math.round(a.comercial*WEIGHTS.comercial + a.ventaja*WEIGHTS.ventaja + a.secreto*WEIGHTS.secreto + a.innovacion*WEIGHTS.innovacion + a.riesgo*WEIGHTS.riesgo + a.madurez*WEIGHTS.madurez);
 }
-
-function getPriority(score) {
-  if (score >= PRIORIDAD.critica) return 'Crítica';
-  if (score >= PRIORIDAD.alta)    return 'Alta';
-  if (score >= PRIORIDAD.media)   return 'Media';
-  return 'Baja';
-}
-
-function getPriorityClass(p) {
-  return { 'Crítica':'critica', 'Alta':'alta', 'Media':'media', 'Baja':'baja' }[p] || 'baja';
-}
+function getPriority(s) { return s>=PRIORIDAD.critica?'Crítica':s>=PRIORIDAD.alta?'Alta':s>=PRIORIDAD.media?'Media':'Baja'; }
+function getPriorityClass(p) { return {'Crítica':'critica','Alta':'alta','Media':'media','Baja':'baja'}[p]||'baja'; }
+function getRadio(name) { const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:''; }
+function toggleMetodo(show) { document.getElementById('f-metodo-wrap').style.display=show?'block':'none'; }
+function protClass(e) { return e==='No susceptible de protección'?'prot-no':e==='Pendiente de solicitud'?'prot-pendiente':e==='Protección solicitada'?'prot-solicitada':''; }
 
 function getProtectionStrategy(a) {
-  const strategies = [];
-  const urgency = a.priority === 'Crítica' ? 'inmediata' : a.priority === 'Alta' ? 'corto' : 'medio';
-  if (a.tipo === 'Patente potencial')              strategies.push('Iniciar búsqueda de anterioridades y redactar reivindicaciones');
-  if (a.tipo === 'Secreto comercial' || a.secreto >= 7) strategies.push('Implementar NDA y protocolos de acceso restringido');
-  if (a.tipo === 'Software / código')              strategies.push('Registrar código fuente en entidad de derechos de autor');
-  if (a.tipo === 'Marca / nombre')                 strategies.push('Solicitar registro de marca ante la SIC / IMPI / USPTO');
-  if (a.tipo === 'Diseño industrial')              strategies.push('Registrar diseño industrial con documentación técnica');
-  if (a.riesgo >= 7)                               strategies.push('Documentar fecha de creación con notaría o timestamping digital');
-  if (a.madurez <= 4)                              strategies.push('Completar documentación técnica antes de cualquier divulgación');
-  if (a.innovacion >= 7)                           strategies.push('Evaluar patentabilidad con agente de PI especializado');
-  if (a.comercial >= 8)                            strategies.push('Valorar el activo para eventuales licencias o transferencia tecnológica');
-  if (strategies.length === 0)                     strategies.push('Mantener documentación interna actualizada y revisar periódicamente');
-  return { urgency, strategies: strategies.slice(0, 4) };
+  const s=[], urgency=a.priority==='Crítica'?'inmediata':a.priority==='Alta'?'corto':'medio';
+  if (a.tipo==='Patente')            s.push('Iniciar búsqueda de anterioridades y redactar reivindicaciones');
+  if (a.tipo==='Secreto industrial'||a.secreto>=7) s.push('Implementar NDA y protocolos de acceso restringido');
+  if (a.tipo==='Derechos de autor')  s.push('Registrar la obra ante la Dirección Nacional de Derecho de Autor');
+  if (a.tipo==='Marca')              s.push('Solicitar registro de marca ante la SIC');
+  if (a.tipo==='Diseño Industrial')  s.push('Registrar diseño industrial con documentación técnica ante la SIC');
+  if (a.tipo==='Modelo de Utilidad') s.push('Evaluar solicitud de modelo de utilidad ante la SIC');
+  if (a.riesgo>=7)                   s.push('Documentar fecha de creación con notaría o timestamping digital');
+  if (a.madurez<=4)                  s.push('Completar documentación técnica antes de cualquier divulgación');
+  if (a.innovacion>=7)               s.push('Evaluar patentabilidad con agente de PI especializado');
+  if (a.comercial>=8)                s.push('Valorar el activo para eventuales licencias o transferencia tecnológica');
+  if (a.estadoprot==='Pendiente de solicitud') s.push('Gestionar solicitud de protección formal de manera prioritaria');
+  if (a.nda==='No'&&a.secreto>=5)    s.push('Implementar acuerdos de confidencialidad con colaboradores y proveedores');
+  if (a.valorada==='No'&&a.comercial>=7) s.push('Realizar ejercicio de valoración del activo para conocer su valor económico');
+  if (s.length===0) s.push('Mantener documentación interna actualizada y revisar periódicamente');
+  return { urgency, strategies: s.slice(0,5) };
 }
-
-/* ---------- Agregar activo ---------- */
 
 function agregarActivo() {
-  const nombre = document.getElementById('f-nombre').value.trim();
-  const tipo   = document.getElementById('f-tipo').value;
-  if (!nombre || !tipo) { showToast('Completa el nombre y tipo del activo'); return; }
-
-  const btn = document.getElementById('btn-agregar');
-  btn.disabled = true;
-  btn.textContent = 'Guardando...';
-
-  const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot syncing';
-
+  const nombre=document.getElementById('f-nombre').value.trim(), tipo=document.getElementById('f-tipo').value;
+  if (!nombre||!tipo) { showToast('Completa el nombre y mecanismo de protección'); return; }
+  const btn=document.getElementById('btn-agregar');
+  btn.disabled=true; btn.textContent='Guardando...';
+  document.getElementById('sync-dot').className='sync-dot syncing';
+  const valorada=getRadio('f-valorada');
   const asset = {
-    nombre,
-    tipo,
-    desc:       document.getElementById('f-desc').value.trim(),
-    area:       document.getElementById('f-area').value.trim(),
-    resp:       document.getElementById('f-resp').value.trim(),
-    comercial:  parseInt(document.getElementById('s-comercial').value),
-    ventaja:    parseInt(document.getElementById('s-ventaja').value),
-    secreto:    parseInt(document.getElementById('s-secreto').value),
+    nombre, tipo,
+    desc: document.getElementById('f-desc').value.trim(),
+    area: document.getElementById('f-area').value.trim(),
+    resp: document.getElementById('f-resp').value.trim(),
+    tecno: getRadio('f-tecno'), protegido: getRadio('f-protegido'),
+    trl: document.getElementById('f-trl').value,
+    titularidad: getRadio('f-titularidad'), nda: getRadio('f-nda'), acceso: getRadio('f-acceso'),
+    acuerdopi: getRadio('f-acuerdopi'), estadoprot: getRadio('f-estadoprot'),
+    derechos: getRadio('f-derechos'), otorgado: getRadio('f-otorgado'), contrato: getRadio('f-contrato'),
+    valorada, metodo: valorada==='Sí'?document.getElementById('f-metodo').value:'',
+    comercial: parseInt(document.getElementById('s-comercial').value),
+    ventaja: parseInt(document.getElementById('s-ventaja').value),
+    secreto: parseInt(document.getElementById('s-secreto').value),
     innovacion: parseInt(document.getElementById('s-innovacion').value),
-    riesgo:     parseInt(document.getElementById('s-riesgo').value),
-    madurez:    parseInt(document.getElementById('s-madurez').value),
-    fecha:      new Date().toLocaleDateString('es-CO')
+    riesgo: parseInt(document.getElementById('s-riesgo').value),
+    madurez: parseInt(document.getElementById('s-madurez').value),
+    fecha: new Date().toLocaleDateString('es-CO')
   };
-
-  asset.score    = calcScore(asset);
-  asset.priority = getPriority(asset.score);
-
+  asset.score=calcScore(asset); asset.priority=getPriority(asset.score);
   ref.push(asset)
-    .then(() => {
-      resetForm();
-      switchTab('inventario');
-      showToast('Activo guardado y sincronizado');
-    })
-    .catch(err => {
-      showToast('Error al guardar: ' + err.message);
-    })
-    .finally(() => {
-      btn.disabled = false;
-      btn.textContent = 'Evaluar y agregar al inventario';
-    });
+    .then(() => { resetForm(); switchTab('inventario'); showToast('Activo guardado y sincronizado'); })
+    .catch(err => showToast('Error: '+err.message))
+    .finally(() => { btn.disabled=false; btn.textContent='Evaluar y agregar al inventario'; });
 }
-
-function removeAsset(id) {
-  if (!confirm('¿Eliminar este activo del inventario?')) return;
-  ref.child(id).remove()
-    .then(() => showToast('Activo eliminado'))
-    .catch(err => showToast('Error: ' + err.message));
-}
-
-/* ---------- UI ---------- */
 
 function resetForm() {
-  ['f-nombre','f-desc','f-area','f-resp'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-tipo').value = '';
+  ['f-nombre','f-desc','f-area','f-resp'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-tipo').value='';
+  document.getElementById('f-trl').value='';
+  document.getElementById('f-metodo').value='';
+  document.getElementById('f-metodo-wrap').style.display='none';
+  ['f-tecno','f-protegido','f-titularidad','f-nda','f-acceso','f-acuerdopi','f-estadoprot','f-derechos','f-otorgado','f-contrato','f-valorada']
+    .forEach(n => { const el=document.querySelector(`input[name="${n}"]:checked`); if(el) el.checked=false; });
   ['comercial','ventaja','secreto','innovacion','riesgo','madurez'].forEach(k => {
-    document.getElementById('s-' + k).value = 5;
-    document.getElementById('v-' + k).textContent = '5';
+    document.getElementById('s-'+k).value=5; document.getElementById('v-'+k).textContent='5';
   });
 }
 
-function setFilter(f, btn) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderInventory();
+function removeAsset(id) {
+  if (!confirm('¿Eliminar este activo?')) return;
+  ref.child(id).remove().then(()=>showToast('Activo eliminado')).catch(err=>showToast('Error: '+err.message));
 }
 
-function updateAll() {
-  renderStats();
-  renderInventory();
-  renderMatrix();
-  renderRecommendations();
+function setFilter(f,btn) {
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderInventory();
 }
+
+function updateAll() { renderStats(); renderInventory(); renderMatrix(); renderRecommendations(); }
 
 function renderStats() {
-  const total    = assets.length;
-  const criticos = assets.filter(a => a.priority === 'Crítica').length;
-  const avgScore = total ? Math.round(assets.reduce((s, a) => s + a.score, 0) / total) : '—';
-  const tipos    = new Set(assets.map(a => a.tipo)).size;
-  document.getElementById('st-total').textContent    = total;
-  document.getElementById('st-criticos').textContent = criticos;
-  document.getElementById('st-score').textContent    = total ? avgScore : '—';
-  document.getElementById('st-tipos').textContent    = tipos;
+  const t=assets.length;
+  document.getElementById('st-total').textContent=t;
+  document.getElementById('st-criticos').textContent=assets.filter(a=>a.priority==='Crítica').length;
+  document.getElementById('st-score').textContent=t?Math.round(assets.reduce((s,a)=>s+a.score,0)/t):'—';
+  document.getElementById('st-tipos').textContent=new Set(assets.map(a=>a.tipo)).size;
 }
 
 function renderInventory() {
-  const list     = document.getElementById('asset-list');
-  const filtered = activeFilter === 'todos' ? assets : assets.filter(a => a.priority === activeFilter);
-
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">◎</div>
-      <div class="empty-text">${assets.length === 0
-        ? 'No hay activos registrados aún.<br>Usa la pestaña "Registrar activo" para comenzar.'
-        : 'No hay activos con esta prioridad.'}</div>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = filtered.map(a => `
+  const list=document.getElementById('asset-list');
+  const filtered=activeFilter==='todos'?assets:assets.filter(a=>a.priority===activeFilter);
+  if (filtered.length===0) { list.innerHTML=`<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">${assets.length===0?'No hay activos registrados aún.<br>Usa la pestaña "Registrar" para comenzar.':'No hay activos con esta prioridad.'}</div></div>`; return; }
+  list.innerHTML=filtered.map(a=>`
     <div class="asset-card">
       <div class="asset-card-top">
         <div>
           <div class="asset-name">${a.nombre}</div>
-          <div class="asset-type">${a.tipo}${a.area ? ' · ' + a.area : ''}</div>
+          <div class="asset-type">${a.tipo}${a.area?' · '+a.area:''}${a.trl?' · '+a.trl:''}</div>
         </div>
         <div class="asset-badges">
           <span class="score-pill">${a.score}/10</span>
           <span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span>
         </div>
       </div>
-      ${a.desc ? `<div style="font-size:12px;color:var(--ink-mid);margin-bottom:6px;line-height:1.5;">${a.desc}</div>` : ''}
+      ${a.desc?`<div style="font-size:12px;color:var(--ink-mid);margin-bottom:6px;line-height:1.5;">${a.desc}</div>`:''}
+      <div class="asset-tags">
+        ${a.tecno?`<span class="tag-pill">${a.tecno}</span>`:''}
+        ${a.estadoprot?`<span class="prot-badge ${protClass(a.estadoprot)}">${a.estadoprot}</span>`:''}
+        ${a.titularidad?`<span class="tag-pill">${a.titularidad}</span>`:''}
+        ${a.valorada==='Sí'&&a.metodo?`<span class="tag-pill">Valorado: ${a.metodo}</span>`:''}
+      </div>
       <div class="asset-metrics">
         <span class="metric-mini">Valor comercial: <span>${a.comercial}</span></span>
         <span class="metric-mini">Ventaja: <span>${a.ventaja}</span></span>
@@ -715,244 +568,125 @@ function renderInventory() {
         <button class="action-btn" onclick="showDetail('${a.id}')">Ver detalle</button>
         <button class="action-btn danger" onclick="removeAsset('${a.id}')">Eliminar</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function renderMatrix() {
-  const grid = document.getElementById('matrix-grid');
-  const cellColors = [
-    ['#fef3d0','#fde8e6','#fde8e6'],
-    ['#d0ede8','#fef3d0','#fde8e6'],
-    ['#ededf5','#d0ede8','#fef3d0']
-  ];
-  const cellLabels = [
-    ['Medio valor, bajo riesgo','Alto valor, riesgo medio','Alto valor, alto riesgo'],
-    ['Bajo valor, bajo riesgo', 'Medio valor, riesgo medio','Medio valor, alto riesgo'],
-    ['Bajo valor, bajo riesgo', 'Bajo valor, riesgo medio', 'Bajo valor, alto riesgo']
-  ];
-  const rows = Array.from({length:3}, () => Array.from({length:3}, () => []));
-  assets.forEach(a => {
-    const col = Math.min(2, Math.floor(a.riesgo / 4));
-    const row = 2 - Math.min(2, Math.floor(a.comercial / 4));
-    rows[row][col].push(a.nombre);
-  });
-  let html = '';
-  for (let r = 0; r < 3; r++) {
-    for (let c = 0; c < 3; c++) {
-      const tags = rows[r][c].map(n =>
-        `<div class="cell-asset-tag">${n.length > 16 ? n.slice(0,14)+'…' : n}</div>`
-      ).join('');
-      html += `<div class="matrix-cell" style="background:${cellColors[r][c]};">
-        <div class="cell-label">${cellLabels[r][c]}</div>
-        <div class="cell-assets">${tags}</div>
-      </div>`;
-    }
+  const grid=document.getElementById('matrix-grid');
+  const cc=[['#fef3d0','#fde8e6','#fde8e6'],['#d0ede8','#fef3d0','#fde8e6'],['#ededf5','#d0ede8','#fef3d0']];
+  const cl=[['Medio valor, bajo riesgo','Alto valor, riesgo medio','Alto valor, alto riesgo'],['Bajo valor, bajo riesgo','Medio valor, riesgo medio','Medio valor, alto riesgo'],['Bajo valor, bajo riesgo','Bajo valor, riesgo medio','Bajo valor, alto riesgo']];
+  const rows=Array.from({length:3},()=>Array.from({length:3},()=>[]));
+  assets.forEach(a=>{ const col=Math.min(2,Math.floor(a.riesgo/4)),row=2-Math.min(2,Math.floor(a.comercial/4)); rows[row][col].push(a.nombre); });
+  let html='';
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++) {
+    const tags=rows[r][c].map(n=>`<div class="cell-asset-tag">${n.length>16?n.slice(0,14)+'…':n}</div>`).join('');
+    html+=`<div class="matrix-cell" style="background:${cc[r][c]};"><div class="cell-label">${cl[r][c]}</div><div class="cell-assets">${tags}</div></div>`;
   }
-  grid.innerHTML = html;
-
-  const insightsBox = document.getElementById('matrix-insights');
-  if (assets.length > 0) {
-    const highVal  = assets.filter(a => a.comercial >= 7);
-    const highRisk = assets.filter(a => a.riesgo >= 7);
-    const critical = assets.filter(a => a.priority === 'Crítica');
-    let text = '';
-    if (critical.length > 0) text += `<strong>${critical.length}</strong> activo(s) con prioridad crítica requieren acción inmediata. `;
-    if (highVal.length > 0)  text += `<strong>${highVal.length}</strong> activo(s) tienen alto valor comercial. `;
-    if (highRisk.length > 0) text += `<strong>${highRisk.length}</strong> activo(s) tienen alto riesgo de replicación — priorizar protección formal.`;
-    document.getElementById('matrix-insights-content').innerHTML = text || 'Añade más activos para generar hallazgos.';
-    insightsBox.style.display = 'block';
-    document.getElementById('matrix-legend').textContent = assets.length + ' activo(s) posicionados en la matriz.';
-  } else {
-    insightsBox.style.display = 'none';
-    document.getElementById('matrix-legend').textContent = 'Registra activos para poblar la matriz.';
-  }
+  grid.innerHTML=html;
+  const ib=document.getElementById('matrix-insights');
+  if(assets.length>0){
+    const hv=assets.filter(a=>a.comercial>=7),hr=assets.filter(a=>a.riesgo>=7),cr=assets.filter(a=>a.priority==='Crítica');
+    let txt='';
+    if(cr.length>0) txt+=`<strong>${cr.length}</strong> activo(s) con prioridad crítica requieren acción inmediata. `;
+    if(hv.length>0) txt+=`<strong>${hv.length}</strong> activo(s) tienen alto valor comercial. `;
+    if(hr.length>0) txt+=`<strong>${hr.length}</strong> activo(s) tienen alto riesgo de replicación — priorizar protección formal.`;
+    document.getElementById('matrix-insights-content').innerHTML=txt||'Añade más activos para generar hallazgos.';
+    ib.style.display='block'; document.getElementById('matrix-legend').textContent=assets.length+' activo(s) posicionados en la matriz.';
+  } else { ib.style.display='none'; document.getElementById('matrix-legend').textContent='Registra activos para poblar la matriz.'; }
 }
 
 function renderRecommendations() {
-  const list = document.getElementById('recom-list');
-  if (assets.length === 0) {
-    list.innerHTML = '<div class="no-assets-msg">Registra activos para ver recomendaciones de protección.</div>';
-    return;
-  }
-  const urgencyLabel = { inmediata: 'Acción inmediata', corto: 'Corto plazo', medio: 'Mediano plazo' };
-  list.innerHTML = assets.map(a => {
-    const { urgency, strategies } = getProtectionStrategy(a);
-    return `<div class="recom-card">
-      <div class="recom-header">
-        <div>
-          <div class="recom-name">${a.nombre}</div>
-          <div style="font-size:11px;color:var(--ink-light);margin-top:2px;">${a.tipo} · Score ${a.score}/10</div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          <span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span>
-          <span class="urgency-tag urgency-${urgency}">${urgencyLabel[urgency]}</span>
-        </div>
-      </div>
-      <ul class="recom-actions-list">${strategies.map(s => `<li>${s}</li>`).join('')}</ul>
-    </div>`;
+  const list=document.getElementById('recom-list');
+  if(!assets.length){list.innerHTML='<div class="no-assets-msg">Registra activos para ver recomendaciones de protección.</div>';return;}
+  const ul={inmediata:'Acción inmediata',corto:'Corto plazo',medio:'Mediano plazo'};
+  list.innerHTML=assets.map(a=>{
+    const{urgency,strategies}=getProtectionStrategy(a);
+    return `<div class="recom-card"><div class="recom-header"><div><div class="recom-name">${a.nombre}</div><div style="font-size:11px;color:var(--ink-light);margin-top:2px;">${a.tipo} · Score ${a.score}/10</div></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"><span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span><span class="urgency-tag urgency-${urgency}">${ul[urgency]}</span></div></div><ul class="recom-actions-list">${strategies.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
   }).join('');
 }
 
+function di(label,val) { return val?`<div class="detail-item"><div class="di-label">${label}</div><div class="di-value">${val}</div></div>`:''; }
+
 function showDetail(id) {
-  const a = assets.find(x => x.id === id);
-  if (!a) return;
-  const criteria = [
-    ['Valor comercial', a.comercial],
-    ['Ventaja competitiva', a.ventaja],
-    ['Confidencialidad', a.secreto],
-    ['Innovación', a.innovacion],
-    ['Riesgo de replicación', a.riesgo],
-    ['Madurez / docs', a.madurez]
-  ];
-  const { urgency, strategies } = getProtectionStrategy(a);
-  const urgencyLabel = { inmediata: 'Acción inmediata', corto: 'Corto plazo', medio: 'Mediano plazo' };
-  document.getElementById('modal-box').innerHTML = `
+  const a=assets.find(x=>x.id===id); if(!a) return;
+  const cr=[['Valor comercial',a.comercial],['Ventaja competitiva',a.ventaja],['Confidencialidad',a.secreto],['Innovación',a.innovacion],['Riesgo de replicación',a.riesgo],['Madurez / docs',a.madurez]];
+  const{urgency,strategies}=getProtectionStrategy(a);
+  const ul={inmediata:'Acción inmediata',corto:'Corto plazo',medio:'Mediano plazo'};
+  document.getElementById('modal-box').innerHTML=`
     <div class="modal-title">${a.nombre}</div>
+    <div class="modal-section">Identificación</div>
     <div class="detail-grid">
-      <div class="detail-item"><div class="detail-item-label">Tipo</div><div class="detail-item-value">${a.tipo}</div></div>
-      <div class="detail-item"><div class="detail-item-label">Score</div><div class="detail-item-value">${a.score}/10</div></div>
-      <div class="detail-item"><div class="detail-item-label">Prioridad</div><div class="detail-item-value"><span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span></div></div>
-      <div class="detail-item"><div class="detail-item-label">Urgencia</div><div class="detail-item-value"><span class="urgency-tag urgency-${urgency}">${urgencyLabel[urgency]}</span></div></div>
-      ${a.area ? `<div class="detail-item"><div class="detail-item-label">Área</div><div class="detail-item-value">${a.area}</div></div>` : ''}
-      ${a.resp ? `<div class="detail-item"><div class="detail-item-label">Responsable</div><div class="detail-item-value">${a.resp}</div></div>` : ''}
-      <div class="detail-item"><div class="detail-item-label">Fecha registro</div><div class="detail-item-value">${a.fecha}</div></div>
+      ${di('Mecanismo de protección',a.tipo)} ${di('Score',a.score+'/10')}
+      <div class="detail-item"><div class="di-label">Prioridad</div><div class="di-value"><span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span></div></div>
+      <div class="detail-item"><div class="di-label">Urgencia</div><div class="di-value"><span class="urgency-tag urgency-${urgency}">${ul[urgency]}</span></div></div>
+      ${di('Área',a.area)} ${di('Responsable',a.resp)} ${di('Fecha registro',a.fecha)}
     </div>
-    ${a.desc ? `<div style="font-size:13px;color:var(--ink-mid);margin-bottom:1rem;padding:0.75rem;background:var(--paper);border-radius:8px;line-height:1.5;">${a.desc}</div>` : ''}
-    <div style="margin-bottom:1rem;">
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--ink-light);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.75rem;">Criterios de evaluación</div>
-      ${criteria.map(([label, val]) => `
-        <div class="score-bar-wrap">
-          <div class="score-bar-label"><span>${label}</span><span>${val}/10</span></div>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:${val*10}%"></div></div>
-        </div>`).join('')}
+    ${a.desc?`<div style="font-size:13px;color:var(--ink-mid);margin-bottom:0.5rem;padding:0.75rem;background:var(--paper);border-radius:8px;line-height:1.5;">${a.desc}</div>`:''}
+    <div class="modal-section">Tipo de tecnología</div>
+    <div class="detail-grid">${di('Clasificación',a.tecno)} ${di('¿Está protegido?',a.protegido)}</div>
+    <div class="modal-section">Estado de alistamiento (TRL)</div>
+    <div class="detail-grid">${di('Nivel TRL',a.trl)}</div>
+    <div class="modal-section">Titularidad</div>
+    <div class="detail-grid">${di('Origen del desarrollo',a.titularidad)} ${di('Acuerdos NDA',a.nda)} ${di('Control de acceso',a.acceso)}</div>
+    <div class="modal-section">Protección jurídica</div>
+    <div class="detail-grid">
+      ${di('Acuerdo de PI',a.acuerdopi)}
+      ${a.estadoprot?`<div class="detail-item"><div class="di-label">Estado de la protección</div><div class="di-value"><span class="prot-badge ${protClass(a.estadoprot)}">${a.estadoprot}</span></div></div>`:''}
     </div>
-    <div>
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--ink-light);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.5rem;">Acciones recomendadas</div>
-      <ul class="recom-actions-list">${strategies.map(s => `<li>${s}</li>`).join('')}</ul>
-    </div>
+    <div class="modal-section">Derechos de explotación</div>
+    <div class="detail-grid">${di('Derechos de explotación',a.derechos)} ${di('Derechos a terceros',a.otorgado)} ${di('Contrato / licencia',a.contrato)}</div>
+    <div class="modal-section">Valoración</div>
+    <div class="detail-grid">${di('¿Valorada?',a.valorada)} ${a.valorada==='Sí'?di('Método',a.metodo):''}</div>
+    <div class="modal-section">Criterios de evaluación</div>
+    ${cr.map(([l,v])=>`<div class="score-bar-wrap"><div class="score-bar-label"><span>${l}</span><span>${v}/10</span></div><div class="score-bar-track"><div class="score-bar-fill" style="width:${v*10}%"></div></div></div>`).join('')}
+    <div class="modal-section">Acciones recomendadas</div>
+    <ul class="recom-actions-list">${strategies.map(s=>`<li>${s}</li>`).join('')}</ul>
     <button class="btn-secondary" style="margin-top:1.25rem;width:100%;" onclick="document.getElementById('modal-overlay').classList.remove('open')">Cerrar</button>
   `;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modal-overlay'))
-    document.getElementById('modal-overlay').classList.remove('open');
-}
+function closeModal(e) { if(e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open'); }
 
 function switchTab(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  const idx = ['registro','inventario','matriz','recomendaciones'].indexOf(name);
-  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.tab')[['registro','inventario','matriz','recomendaciones'].indexOf(name)].classList.add('active');
 }
 
 function exportCSV() {
-  if (assets.length === 0) { showToast('No hay activos para exportar'); return; }
-  const headers = ['Nombre','Tipo','Área','Responsable','Score','Prioridad','Valor Comercial','Ventaja','Secreto','Innovación','Riesgo','Madurez','Descripción','Fecha'];
-  const rows = assets.map(a => [
-    a.nombre, a.tipo, a.area, a.resp, a.score, a.priority,
-    a.comercial, a.ventaja, a.secreto, a.innovacion, a.riesgo, a.madurez,
-    (a.desc || '').replace(/,/g, ';'), a.fecha
-  ]);
-  const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url; link.download = 'activos_intangibles.csv'; link.click();
-  URL.revokeObjectURL(url);
+  if(!assets.length){showToast('No hay activos para exportar');return;}
+  const h=['Nombre','Mecanismo','Tipo tecnología','Protegido','TRL','Titularidad','NDA','Control acceso','Acuerdo PI','Estado protección','Derechos explotación','Derechos terceros','Contrato licencia','Valorada','Método valoración','Área','Responsable','Score','Prioridad','Valor Comercial','Ventaja','Secreto','Innovación','Riesgo','Madurez','Descripción','Fecha'];
+  const r=assets.map(a=>[a.nombre,a.tipo,a.tecno,a.protegido,a.trl,a.titularidad,a.nda,a.acceso,a.acuerdopi,a.estadoprot,a.derechos,a.otorgado,a.contrato,a.valorada,a.metodo,a.area,a.resp,a.score,a.priority,a.comercial,a.ventaja,a.secreto,a.innovacion,a.riesgo,a.madurez,(a.desc||'').replace(/,/g,';'),a.fecha]);
+  const csv=[h,...r].map(row=>row.map(v=>'"'+(v||'')+'"').join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob), link=document.createElement('a');
+  link.href=url; link.download='activos_intangibles.csv'; link.click(); URL.revokeObjectURL(url);
 }
 
 function exportSnapshot() {
-  if (assets.length === 0) { showToast('No hay activos para exportar'); return; }
-  showToast('Generando snapshot...');
-  generarSnapshotManual();
+  if(!assets.length){showToast('No hay activos para exportar');return;}
+  showToast('Generando snapshot...'); generarSnapshotManual();
 }
 
 function generarSnapshotManual() {
-  // Genera una página de solo lectura simple con los datos actuales
-  const fecha = new Date().toLocaleDateString('es-CO');
-  const urgencyLabel = { inmediata: 'Acción inmediata', corto: 'Corto plazo', medio: 'Mediano plazo' };
-
-  const rows = assets.map(a => {
-    const { urgency, strategies } = getProtectionStrategy(a);
-    return `<tr>
-      <td><strong>${a.nombre}</strong><br><small style="color:#888;">${a.tipo}</small></td>
-      <td style="text-align:center;">${a.score}/10</td>
-      <td style="text-align:center;"><span style="padding:2px 8px;border-radius:12px;font-size:11px;background:${{Crítica:'#fde8e6',Alta:'#fef3d0',Media:'#d0ede8',Baja:'#ededf5'}[a.priority]};color:${{Crítica:'#a93226',Alta:'#9a6c00',Media:'#1a6b5e',Baja:'#5a5a8a'}[a.priority]}">${a.priority}</span></td>
-      <td style="font-size:11px;color:#666;">${a.area || '—'}</td>
-      <td style="font-size:11px;color:#666;">${a.resp || '—'}</td>
-      <td style="font-size:11px;">${strategies.map(s=>'→ '+s).join('<br>')}</td>
-    </tr>`;
+  const fecha=new Date().toLocaleDateString('es-CO');
+  const pc={Crítica:'#fde8e6',Alta:'#fef3d0',Media:'#d0ede8',Baja:'#ededf5'}, pt={Crítica:'#a93226',Alta:'#9a6c00',Media:'#1a6b5e',Baja:'#5a5a8a'};
+  const rows=assets.map(a=>{
+    const{urgency,strategies}=getProtectionStrategy(a);
+    return `<tr><td><strong>${a.nombre}</strong><br><small style="color:#888;">${a.tipo}</small>${a.trl?`<br><small style="color:#aaa;">${a.trl}</small>`:''}</td><td style="text-align:center;">${a.score}/10</td><td style="text-align:center;"><span style="padding:2px 8px;border-radius:12px;font-size:11px;background:${pc[a.priority]};color:${pt[a.priority]}">${a.priority}</span></td><td style="font-size:11px;color:#666;">${a.estadoprot||'—'}</td><td style="font-size:11px;color:#666;">${a.titularidad||'—'}</td><td style="font-size:11px;color:#666;">${a.area||'—'}</td><td style="font-size:11px;">${strategies.map(s=>'→ '+s).join('<br>')}</td></tr>`;
   }).join('');
-
-  const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Activos Intangibles — Snapshot ${fecha}</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-body{font-family:Syne,sans-serif;background:#f7f6f1;color:#1a1a2e;padding:2rem 1rem;}
-.wrap{max-width:900px;margin:0 auto;}
-.banner{background:#fef3d0;color:#9a6c00;font-family:'DM Mono',monospace;font-size:12px;padding:10px 16px;border-radius:8px;margin-bottom:1.5rem;text-align:center;}
-h1{font-size:26px;font-weight:400;margin-bottom:0.25rem;}
-h1 span{color:#c9a84c;font-style:italic;}
-.sub{font-family:'DM Mono',monospace;font-size:11px;color:#8a8aaa;margin-bottom:2rem;}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:2rem;}
-.stat{background:#eeeae0;border-radius:8px;padding:0.75rem;text-align:center;}
-.stat-n{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
-.stat-l{font-size:10px;color:#8a8aaa;margin-top:2px;}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:0.5px solid rgba(26,26,46,0.12);}
-th{background:#1a1a2e;color:#fff;padding:10px 12px;font-size:11px;font-family:'DM Mono',monospace;text-align:left;font-weight:400;letter-spacing:0.05em;}
-td{padding:10px 12px;border-bottom:0.5px solid rgba(26,26,46,0.08);vertical-align:top;font-size:13px;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fafaf7;}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr;}.sub-col{display:none;}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="banner">Vista de solo lectura · Snapshot generado el ${fecha}</div>
-  <h1>Activos <span>Intangibles</span></h1>
-  <div class="sub">SNAPSHOT DE INVENTARIO · PROTECCIÓN IP</div>
-  <div class="stats">
-    <div class="stat"><div class="stat-n">${assets.length}</div><div class="stat-l">Total activos</div></div>
-    <div class="stat"><div class="stat-n">${assets.filter(a=>a.priority==='Crítica').length}</div><div class="stat-l">Prioridad crítica</div></div>
-    <div class="stat"><div class="stat-n">${assets.length ? Math.round(assets.reduce((s,a)=>s+a.score,0)/assets.length) : '—'}</div><div class="stat-l">Score promedio</div></div>
-    <div class="stat"><div class="stat-n">${new Set(assets.map(a=>a.tipo)).size}</div><div class="stat-l">Tipos distintos</div></div>
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>Activo</th><th>Score</th><th>Prioridad</th>
-        <th class="sub-col">Área</th><th class="sub-col">Responsable</th><th>Acciones recomendadas</th>
-      </tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table>
-</div>
-</body>
-</html>`;
-
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `activos_ip_snapshot_${new Date().toISOString().slice(0,10)}.html`;
-  link.click();
-  URL.revokeObjectURL(url);
+  const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Snapshot IP — Operadora Avícola Colombia — ${fecha}</title><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"><style>body{font-family:Syne,sans-serif;background:#f7f6f1;color:#1a1a2e;padding:2rem 1rem;}.wrap{max-width:1000px;margin:0 auto;}.banner{background:#fef3d0;color:#9a6c00;font-family:'DM Mono',monospace;font-size:12px;padding:10px 16px;border-radius:8px;margin-bottom:1.5rem;text-align:center;}h1{font-size:26px;font-weight:400;margin-bottom:0.25rem;}h1 span{color:#c9a84c;font-style:italic;}.sub{font-family:'DM Mono',monospace;font-size:11px;color:#8a8aaa;margin-bottom:2rem;}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:2rem;}.stat{background:#eeeae0;border-radius:8px;padding:0.75rem;text-align:center;}.stat-n{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}.stat-l{font-size:10px;color:#8a8aaa;margin-top:2px;}table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:0.5px solid rgba(26,26,46,0.12);}th{background:#1a1a2e;color:#fff;padding:10px 12px;font-size:11px;font-family:'DM Mono',monospace;text-align:left;font-weight:400;letter-spacing:0.05em;}td{padding:10px 12px;border-bottom:0.5px solid rgba(26,26,46,0.08);vertical-align:top;font-size:13px;}tr:last-child td{border-bottom:none;}tr:hover td{background:#fafaf7;}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr;}.hc{display:none;}}</style></head><body><div class="wrap"><div class="banner">Vista de solo lectura · Snapshot generado el ${fecha} · Operadora Avícola Colombia S.A.S.</div><h1>Activos <span>Intangibles</span></h1><div class="sub">INVENTARIO DE PROTECCIÓN IP</div><div class="stats"><div class="stat"><div class="stat-n">${assets.length}</div><div class="stat-l">Total activos</div></div><div class="stat"><div class="stat-n">${assets.filter(a=>a.priority==='Crítica').length}</div><div class="stat-l">Prioridad crítica</div></div><div class="stat"><div class="stat-n">${assets.length?Math.round(assets.reduce((s,a)=>s+a.score,0)/assets.length):'—'}</div><div class="stat-l">Score promedio</div></div><div class="stat"><div class="stat-n">${new Set(assets.map(a=>a.tipo)).size}</div><div class="stat-l">Mecanismos distintos</div></div></div><table><thead><tr><th>Activo</th><th>Score</th><th>Prioridad</th><th class="hc">Estado protección</th><th class="hc">Titularidad</th><th class="hc">Área</th><th>Acciones recomendadas</th></tr></thead><tbody>${rows}</tbody></table></div></body></html>`;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob), link=document.createElement('a');
+  link.href=url; link.download=`activos_ip_snapshot_${new Date().toISOString().slice(0,10)}.html`; link.click(); URL.revokeObjectURL(url);
   showToast('Snapshot listo para compartir');
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 
 renderMatrix();
