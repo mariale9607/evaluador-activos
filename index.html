@@ -869,63 +869,7 @@ function exportCSV() {
 function exportSnapshot() {
   if (assets.length === 0) { showToast('No hay activos para exportar'); return; }
   showToast('Generando snapshot...');
-
-  // Lee el HTML actual de esta misma página
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', window.location.href, true);
-  xhr.onload = function() {
-    let html = xhr.responseText;
-
-    // Inyecta los datos como variable global justo antes del cierre del script principal
-    const dataScript = `\n<script>\n__SNAPSHOT_DATA__ = ${JSON.stringify(assets)};\n<\/script>\n`;
-    html = html.replace('<!-- Firebase SDKs (compat) -->', dataScript + '<!-- Firebase SDKs (compat) -->');
-
-    // En modo snapshot: no conecta a Firebase, carga los datos embebidos y es solo lectura
-    const snapshotInit = `
-// MODO SNAPSHOT — datos embebidos, sin Firebase
-if (typeof __SNAPSHOT_DATA__ !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', function() {
-    // Ocultar indicador de sync y botón de agregar
-    const syncEl = document.getElementById('sync-dot');
-    const syncLb = document.getElementById('sync-label');
-    const btnAg  = document.getElementById('btn-agregar');
-    const snapBtn = document.querySelector('[onclick="exportSnapshot()"]');
-    if (syncEl) { syncEl.className = 'sync-dot'; syncEl.style.background='#aaa'; }
-    if (syncLb) syncLb.textContent = 'Snapshot — solo lectura';
-    if (btnAg)  { btnAg.disabled = true; btnAg.textContent = 'Solo lectura'; }
-    if (snapBtn) snapBtn.style.display = 'none';
-
-    // Cargar datos embebidos
-    assets = __SNAPSHOT_DATA__;
-    assets.sort((a, b) => b.score - a.score);
-    updateAll();
-
-    // Banner de snapshot
-    const banner = document.createElement('div');
-    banner.style = 'background:#fef3d0;color:#9a6c00;font-family:DM Mono,monospace;font-size:12px;padding:10px 16px;text-align:center;border-bottom:0.5px solid #f0c040;';
-    banner.textContent = 'Vista de solo lectura · Snapshot del ' + new Date().toLocaleDateString('es-CO');
-    document.body.insertBefore(banner, document.body.firstChild);
-  });
-}
-`;
-    html = html.replace('renderMatrix();', snapshotInit + '\nif (typeof __SNAPSHOT_DATA__ === \'undefined\') renderMatrix();');
-
-    // Descargar el archivo snapshot
-    const fecha = new Date().toISOString().slice(0,10);
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `activos_ip_snapshot_${fecha}.html`;
-    link.click();
-    URL.revokeObjectURL(url);
-    showToast('Snapshot listo para compartir');
-  };
-  xhr.onerror = function() {
-    // Fallback: construir HTML desde cero con los datos
-    generarSnapshotManual();
-  };
-  xhr.send();
+  generarSnapshotManual();
 }
 
 function generarSnapshotManual() {
