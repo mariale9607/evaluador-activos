@@ -171,7 +171,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       <div class="field-row single"><div class="field"><label>Descripción breve</label><textarea id="f-desc" placeholder="Describe brevemente el activo y su función..."></textarea></div></div>
       <div class="field-row">
         <div class="field"><label>Área / Departamento</label><input type="text" id="f-area" placeholder="Ej: I+D, Producción, Operaciones"></div>
-        <div class="field"><label>Responsable / Autor </label><input type="text" id="f-resp" placeholder="Nombre o cargo"></div>
+        <div class="field"><label>Responsable / Autor</label><input type="text" id="f-resp" placeholder="Nombre o cargo"></div>
       </div>
     </div>
 
@@ -229,7 +229,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
           <label class="radio-item"><input type="radio" name="f-nda" value="Sí"><span>Sí</span></label>
           <label class="radio-item"><input type="radio" name="f-nda" value="No"><span>No</span></label>
           <label class="radio-item"><input type="radio" name="f-nda" value="En proceso"><span>En proceso</span></label>
-          <label class="radio-item"><input type="radio" name="f-nda" value="En proceso"><span>No aplica</span></label>
+          <label class="radio-item"><input type="radio" name="f-nda" value="No aplica"><span>No aplica</span></label>
         </div>
       </div>
       <div class="sub-field"><label>¿Controla el acceso a la información confidencial del activo?</label>
@@ -453,7 +453,7 @@ function protClass(e) { return e==='No susceptible de protección'?'prot-no':e==
 function getProtectionStrategy(a) {
   const s=[], urgency=a.priority==='Crítica'?'inmediata':a.priority==='Alta'?'corto':'medio';
   if (a.tipo==='Patente')                                          s.push('Iniciar búsqueda de patentes previas, anterioridades y redactar reivindicaciones');
-  if (a.tipo==='Secreto industrial'||a.secreto>=7||a.nda==='No')  s.push('Implementar acuerdos de confidencialidad con colaboradores y proveedores y protocolos de acceso restringido');
+  if (a.tipo==='Secreto industrial'||a.secreto>=7||(a.nda==='No'))  s.push('Implementar acuerdos de confidencialidad con colaboradores y proveedores y protocolos de acceso restringido');
   if (a.tipo==='Derechos de autor')                                s.push('Registrar la obra ante la Dirección Nacional de Derechos de Autor');
   if (a.tipo==='Marca')                                            s.push('Solicitar registro de marca ante la SIC');
   if (a.tipo==='Diseño Industrial')                                s.push('Registrar diseño industrial con documentación técnica ante la SIC');
@@ -469,13 +469,64 @@ function getProtectionStrategy(a) {
   return { urgency, strategies: s.slice(0,5) };
 }
 
+let editingId = null;
+
+function editAsset(id) {
+  const a = assets.find(x => x.id === id);
+  if (!a) return;
+  editingId = id;
+
+  // Poblar campos de texto
+  document.getElementById('f-nombre').value   = a.nombre || '';
+  document.getElementById('f-tipo').value     = a.tipo   || '';
+  document.getElementById('f-desc').value     = a.desc   || '';
+  document.getElementById('f-area').value     = a.area   || '';
+  document.getElementById('f-resp').value     = a.resp   || '';
+  document.getElementById('f-tecno').value    = a.tecno  || '';
+  document.getElementById('f-trl').value      = a.trl    || '';
+  document.getElementById('f-metodo').value   = a.metodo || '';
+
+  // Poblar radios
+  const radios = {
+    'f-protegido': a.protegido, 'f-titularidad': a.titularidad,
+    'f-nda': a.nda, 'f-acceso': a.acceso, 'f-acuerdopi': a.acuerdopi,
+    'f-estadoprot': a.estadoprot, 'f-derechos': a.derechos,
+    'f-otorgado': a.otorgado, 'f-contrato': a.contrato, 'f-valorada': a.valorada
+  };
+  Object.entries(radios).forEach(([name, val]) => {
+    const el = document.querySelector(`input[name="${name}"][value="${val}"]`);
+    if (el) el.checked = true;
+  });
+
+  // Mostrar/ocultar método de valoración
+  toggleMetodo(a.valorada === 'Sí');
+
+  // Poblar sliders
+  ['comercial','ventaja','secreto','innovacion','riesgo','madurez'].forEach(k => {
+    document.getElementById('s-'+k).value       = a[k] || 5;
+    document.getElementById('v-'+k).textContent = a[k] || 5;
+  });
+
+  // Cambiar botón
+  const btn = document.getElementById('btn-agregar');
+  btn.textContent = 'Guardar cambios';
+  btn.style.background = '#2d7d6f';
+
+  switchTab('registro');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('Editando activo — modifica y guarda los cambios');
+}
+
 function agregarActivo() {
-  const nombre=document.getElementById('f-nombre').value.trim(), tipo=document.getElementById('f-tipo').value;
-  if (!nombre||!tipo) { showToast('Completa el nombre y mecanismo de protección'); return; }
-  const btn=document.getElementById('btn-agregar');
-  btn.disabled=true; btn.textContent='Guardando...';
-  document.getElementById('sync-dot').className='sync-dot syncing';
-  const valorada=getRadio('f-valorada');
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const tipo   = document.getElementById('f-tipo').value;
+  if (!nombre || !tipo) { showToast('Completa el nombre y mecanismo de protección'); return; }
+
+  const btn = document.getElementById('btn-agregar');
+  btn.disabled = true; btn.textContent = editingId ? 'Guardando cambios...' : 'Guardando...';
+  document.getElementById('sync-dot').className = 'sync-dot syncing';
+
+  const valorada = getRadio('f-valorada');
   const asset = {
     nombre, tipo,
     desc: document.getElementById('f-desc').value.trim(),
@@ -486,23 +537,40 @@ function agregarActivo() {
     titularidad: getRadio('f-titularidad'), nda: getRadio('f-nda'), acceso: getRadio('f-acceso'),
     acuerdopi: getRadio('f-acuerdopi'), estadoprot: getRadio('f-estadoprot'),
     derechos: getRadio('f-derechos'), otorgado: getRadio('f-otorgado'), contrato: getRadio('f-contrato'),
-    valorada, metodo: valorada==='Sí'?document.getElementById('f-metodo').value:'',
-    comercial: parseInt(document.getElementById('s-comercial').value),
-    ventaja: parseInt(document.getElementById('s-ventaja').value),
-    secreto: parseInt(document.getElementById('s-secreto').value),
+    valorada, metodo: valorada === 'Sí' ? document.getElementById('f-metodo').value : '',
+    comercial:  parseInt(document.getElementById('s-comercial').value),
+    ventaja:    parseInt(document.getElementById('s-ventaja').value),
+    secreto:    parseInt(document.getElementById('s-secreto').value),
     innovacion: parseInt(document.getElementById('s-innovacion').value),
-    riesgo: parseInt(document.getElementById('s-riesgo').value),
-    madurez: parseInt(document.getElementById('s-madurez').value),
-    fecha: new Date().toLocaleDateString('es-CO')
+    riesgo:     parseInt(document.getElementById('s-riesgo').value),
+    madurez:    parseInt(document.getElementById('s-madurez').value),
+    fecha: editingId ? (assets.find(x=>x.id===editingId)||{}).fecha || new Date().toLocaleDateString('es-CO') : new Date().toLocaleDateString('es-CO')
   };
-  asset.score=calcScore(asset); asset.priority=getPriority(asset.score);
-  ref.push(asset)
-    .then(() => { resetForm(); switchTab('inventario'); showToast('Activo guardado y sincronizado'); })
-    .catch(err => showToast('Error: '+err.message))
-    .finally(() => { btn.disabled=false; btn.textContent='Evaluar y agregar al inventario'; });
+  asset.score    = calcScore(asset);
+  asset.priority = getPriority(asset.score);
+
+  const operation = editingId ? ref.child(editingId).update(asset) : ref.push(asset);
+
+  operation
+    .then(() => {
+      resetForm();
+      switchTab('inventario');
+      showToast(editingId ? 'Activo actualizado correctamente' : 'Activo guardado y sincronizado');
+      editingId = null;
+    })
+    .catch(err => showToast('Error: ' + err.message))
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'Evaluar y agregar al inventario';
+      btn.style.background = '';
+    });
 }
 
 function resetForm() {
+  editingId = null;
+  const btn = document.getElementById('btn-agregar');
+  btn.textContent = 'Evaluar y agregar al inventario';
+  btn.style.background = '';
   ['f-nombre','f-desc','f-area','f-resp'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-tipo').value='';
   document.getElementById('f-trl').value='';
@@ -569,6 +637,7 @@ function renderInventory() {
       </div>
       <div class="asset-actions">
         <button class="action-btn" onclick="showDetail('${a.id}')">Ver detalle</button>
+        <button class="action-btn" onclick="editAsset('${a.id}')">Editar</button>
         <button class="action-btn danger" onclick="removeAsset('${a.id}')">Eliminar</button>
       </div>
     </div>`).join('');
@@ -622,7 +691,7 @@ function showDetail(id) {
       ${di('Mecanismo de protección',a.tipo)} ${di('Score',a.score+'/10')}
       <div class="detail-item"><div class="di-label">Prioridad</div><div class="di-value"><span class="priority-badge priority-${getPriorityClass(a.priority)}">${a.priority}</span></div></div>
       <div class="detail-item"><div class="di-label">Urgencia</div><div class="di-value"><span class="urgency-tag urgency-${urgency}">${ul[urgency]}</span></div></div>
-      ${di('Área',a.area)} ${di('Responsable',a.resp)} ${di('Fecha registro',a.fecha)}
+      ${di('Área',a.area)} ${di('Responsable / Autor',a.resp)} ${di('Fecha registro',a.fecha)}
     </div>
     ${a.desc?`<div style="font-size:13px;color:var(--ink-mid);margin-bottom:0.5rem;padding:0.75rem;background:var(--paper);border-radius:8px;line-height:1.5;">${a.desc}</div>`:''}
     <div class="modal-section">Tipo de tecnología</div>
@@ -644,7 +713,10 @@ function showDetail(id) {
     ${cr.map(([l,v])=>`<div class="score-bar-wrap"><div class="score-bar-label"><span>${l}</span><span>${v}/10</span></div><div class="score-bar-track"><div class="score-bar-fill" style="width:${v*10}%"></div></div></div>`).join('')}
     <div class="modal-section">Acciones recomendadas</div>
     <ul class="recom-actions-list">${strategies.map(s=>`<li>${s}</li>`).join('')}</ul>
-    <button class="btn-secondary" style="margin-top:1.25rem;width:100%;" onclick="document.getElementById('modal-overlay').classList.remove('open')">Cerrar</button>
+    <div style="display:flex;gap:8px;margin-top:1.25rem;">
+      <button class="btn-secondary" style="flex:1;" onclick="editAsset('${a.id}');document.getElementById('modal-overlay').classList.remove('open')">Editar</button>
+      <button class="btn-secondary" style="flex:1;" onclick="document.getElementById('modal-overlay').classList.remove('open')">Cerrar</button>
+    </div>
   `;
   document.getElementById('modal-overlay').classList.add('open');
 }
