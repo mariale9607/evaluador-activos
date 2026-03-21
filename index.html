@@ -394,6 +394,19 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       <div class="form-card-title">Hallazgos de la matriz</div>
       <div id="matrix-insights-content" style="font-size:13px;color:var(--ink-mid);line-height:1.7;"></div>
     </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Plano cartesiano — valor comercial × riesgo de replicación</div>
+      <div style="position:relative;width:100%;height:360px;">
+        <canvas id="scatter-chart"></canvas>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;font-family:'DM Mono',monospace;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#a93226;display:inline-block;"></span>Crítica</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#9a6c00;display:inline-block;"></span>Alta</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#1a6b5e;display:inline-block;"></span>Media</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#5a5a8a;display:inline-block;"></span>Baja</span>
+      </div>
+    </div>
   </div>
 
   <!-- RECOMENDACIONES -->
@@ -409,6 +422,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const WEIGHTS = { comercial:0.30, ventaja:0.20, innovacion:0.20, secreto:0.15, riesgo:0.10, madurez:0.05 };
 const PRIORIDAD = { critica:8, alta:6, media:4 };
@@ -642,7 +656,7 @@ function setFilter(f,btn) {
   btn.classList.add('active'); renderInventory();
 }
 
-function updateAll() { renderStats(); renderInventory(); renderMatrix(); renderRecommendations(); }
+function updateAll() { renderStats(); renderInventory(); renderMatrix(); renderRecommendations(); renderScatter(); }
 
 function renderStats() {
   const t=assets.length;
@@ -704,6 +718,111 @@ function resetOrder() {
   renderInventory();
   renderRecommendations();
   showToast('Orden restaurado por score');
+}
+
+let scatterChart = null;
+
+function renderScatter() {
+  const canvas = document.getElementById('scatter-chart');
+  if (!canvas) return;
+
+  const colorMap = { Crítica:'#a93226', Alta:'#9a6c00', Media:'#1a6b5e', Baja:'#5a5a8a' };
+
+  const data = assets.map(a => ({
+    x: a.riesgo,
+    y: a.comercial,
+    label: a.nombre,
+    priority: a.priority,
+    score: a.score,
+    color: colorMap[a.priority] || '#5a5a8a'
+  }));
+
+  if (scatterChart) { scatterChart.destroy(); scatterChart = null; }
+
+  scatterChart = new Chart(canvas, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        data: data,
+        pointBackgroundColor: data.map(d => d.color),
+        pointBorderColor: data.map(d => d.color),
+        pointRadius: 8,
+        pointHoverRadius: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const d = data[ctx.dataIndex];
+              return [`${d.label}`, `Valor comercial: ${d.y}  |  Riesgo: ${d.x}`, `Score: ${d.score}/10 · ${d.priority}`];
+            }
+          },
+          backgroundColor: '#1a1a2e',
+          titleColor: '#fff',
+          bodyColor: '#c9c9d9',
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          min: -0.5, max: 10.5,
+          title: { display: true, text: 'Riesgo de replicación →', font: { size: 11 }, color: '#8a8aaa' },
+          grid: { color: 'rgba(26,26,46,0.06)' },
+          ticks: { stepSize: 1, color: '#8a8aaa', font: { size: 11 } }
+        },
+        y: {
+          min: -0.5, max: 10.5,
+          title: { display: true, text: '↑ Valor comercial', font: { size: 11 }, color: '#8a8aaa' },
+          grid: { color: 'rgba(26,26,46,0.06)' },
+          ticks: { stepSize: 1, color: '#8a8aaa', font: { size: 11 } }
+        }
+      }
+    },
+    plugins: [{
+      id: 'quadrantBg',
+      beforeDraw(chart) {
+        const { ctx, chartArea: { left, right, top, bottom, width, height } } = chart;
+        const midX = chart.scales.x.getPixelForValue(5);
+        const midY = chart.scales.y.getPixelForValue(5);
+        const quads = [
+          { x: midX, y: top,    w: right-midX, h: midY-top,    color: 'rgba(192,57,43,0.06)'  },
+          { x: left, y: top,    w: midX-left,  h: midY-top,    color: 'rgba(201,168,76,0.06)' },
+          { x: midX, y: midY,   w: right-midX, h: bottom-midY, color: 'rgba(201,168,76,0.06)' },
+          { x: left, y: midY,   w: midX-left,  h: bottom-midY, color: 'rgba(45,125,111,0.06)' }
+        ];
+        quads.forEach(q => {
+          ctx.fillStyle = q.color;
+          ctx.fillRect(q.x, q.y, q.w, q.h);
+        });
+        ctx.save();
+        ctx.strokeStyle = 'rgba(26,26,46,0.1)';
+        ctx.setLineDash([4,4]);
+        ctx.beginPath(); ctx.moveTo(midX, top); ctx.lineTo(midX, bottom); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(left, midY); ctx.lineTo(right, midY); ctx.stroke();
+        ctx.restore();
+      },
+      afterDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        meta.data.forEach((point, i) => {
+          const d = data[i];
+          const name = d.label.length > 14 ? d.label.slice(0,13)+'…' : d.label;
+          ctx.save();
+          ctx.font = '10px Syne, sans-serif';
+          ctx.fillStyle = '#1a1a2e';
+          ctx.textAlign = 'center';
+          ctx.fillText(name, point.x, point.y - 13);
+          ctx.restore();
+        });
+      }
+    }]
+  });
 }
 
 function renderMatrix() {
