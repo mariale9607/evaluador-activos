@@ -487,6 +487,8 @@ function moveAsset(id, dir) {
   renderInventory();
   renderRecommendations();
 }
+
+function calcScore(a) {
   return Math.round(a.comercial*WEIGHTS.comercial + a.ventaja*WEIGHTS.ventaja + a.secreto*WEIGHTS.secreto + a.innovacion*WEIGHTS.innovacion + a.riesgo*WEIGHTS.riesgo + a.madurez*WEIGHTS.madurez);
 }
 function getPriority(s) { return s>=PRIORIDAD.critica?'Crítica':s>=PRIORIDAD.alta?'Alta':s>=PRIORIDAD.media?'Media':'Baja'; }
