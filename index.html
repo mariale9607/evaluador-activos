@@ -414,6 +414,12 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
+const WEIGHTS = { comercial:0.30, ventaja:0.20, innovacion:0.20, secreto:0.15, riesgo:0.10, madurez:0.05 };
+const PRIORIDAD = { critica:8, alta:6, media:4 };
+
+let assets = [];
+let activeFilter = 'todos';
+
 const firebaseConfig = {
   apiKey: "AIzaSyA44PZJuJjmHCok6ZYN3D4nXK0tVNpRBIo",
   authDomain: "evaluador-activos.firebaseapp.com",
@@ -423,33 +429,46 @@ const firebaseConfig = {
   messagingSenderId: "1040275416113",
   appId: "1:1040275416113:web:0f846d5f6f33571f842110"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const ref = db.ref('activos');
+let db, ref;
+let firebaseOk = false;
 
-const WEIGHTS = { comercial:0.30, ventaja:0.20, innovacion:0.20, secreto:0.15, riesgo:0.10, madurez:0.05 };
-const PRIORIDAD = { critica:8, alta:6, media:4 };
+try {
+  firebase.initializeApp(firebaseConfig);
+  db  = firebase.database();
+  ref = db.ref('activos');
+  firebaseOk = true;
+} catch(e) {
+  console.warn('Firebase no disponible:', e);
+  document.getElementById('sync-dot').className  = 'sync-dot offline';
+  document.getElementById('sync-label').textContent = 'Sin conexión a base de datos';
+}
 
-let assets = [];
-let activeFilter = 'todos';
+if (firebaseOk) {
+  db.ref('.info/connected').on('value', snap => {
+    const dot = document.getElementById('sync-dot'), label = document.getElementById('sync-label');
+    if (snap.val()) { dot.className='sync-dot online'; label.textContent='En línea · sincronizado'; }
+    else { dot.className='sync-dot offline'; label.textContent='Sin conexión'; }
+  });
 
-db.ref('.info/connected').on('value', snap => {
-  const dot = document.getElementById('sync-dot'), label = document.getElementById('sync-label');
-  if (snap.val()) { dot.className='sync-dot online'; label.textContent='En línea · sincronizado'; }
-  else { dot.className='sync-dot offline'; label.textContent='Sin conexión'; }
-});
-
-ref.on('value', snap => {
-  const data = snap.val();
-  assets = data ? Object.entries(data).map(([id,v]) => ({...v,id})) : [];
-  const hasOrder = assets.some(a => a.orden !== undefined);
-  if (hasOrder) {
-    assets.sort((a,b) => (a.orden ?? 9999) - (b.orden ?? 9999));
-  } else {
-    assets.sort((a,b) => b.score - a.score);
-  }
+  ref.on('value', snap => {
+    const data = snap.val();
+    assets = data ? Object.entries(data).map(([id,v]) => ({...v,id})) : [];
+    const hasOrder = assets.some(a => a.orden !== undefined);
+    if (hasOrder) {
+      assets.sort((a,b) => (a.orden ?? 9999) - (b.orden ?? 9999));
+    } else {
+      assets.sort((a,b) => b.score - a.score);
+    }
+    updateAll();
+  }, err => {
+    console.warn('Error Firebase:', err);
+    document.getElementById('sync-dot').className  = 'sync-dot offline';
+    document.getElementById('sync-label').textContent = 'Error de conexión';
+    updateAll();
+  });
+} else {
   updateAll();
-});
+}
 
 function calcScore(a) {
   return Math.round(a.comercial*WEIGHTS.comercial + a.ventaja*WEIGHTS.ventaja + a.secreto*WEIGHTS.secreto + a.innovacion*WEIGHTS.innovacion + a.riesgo*WEIGHTS.riesgo + a.madurez*WEIGHTS.madurez);
