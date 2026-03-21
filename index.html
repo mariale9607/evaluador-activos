@@ -363,6 +363,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       <button class="filter-btn" onclick="setFilter('Media',this)">Media</button>
       <button class="filter-btn" onclick="setFilter('Baja',this)">Baja</button>
       <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="btn-secondary" onclick="resetOrder()" title="Volver al orden por score">↺ Orden por score</button>
         <button class="btn-secondary" onclick="exportCSV()">Exportar CSV</button>
         <button class="btn-secondary" style="background:var(--ink);color:#fff;border-color:var(--ink);" onclick="exportSnapshot()">Compartir snapshot</button>
       </div>
@@ -447,8 +448,8 @@ if (firebaseOk) {
 
   ref.on('value', snap => {
     const data = snap.val();
-    assets = data ? Object.entries(data).map(([id,v]) => ({...v,id})) : [];
-    assets.sort((a,b) => b.score - a.score);
+    const raw = data ? Object.entries(data).map(([id,v]) => ({...v,id})) : [];
+    assets = applyOrder(raw);
     updateAll();
   }, err => {
     console.warn('Error Firebase:', err);
@@ -460,7 +461,32 @@ if (firebaseOk) {
   updateAll();
 }
 
-function calcScore(a) {
+let customOrder = JSON.parse(localStorage.getItem('opav_order') || '[]');
+
+function applyOrder(arr) {
+  if (!customOrder.length) return arr.sort((a,b) => b.score - a.score);
+  const indexed = arr.slice().sort((a,b) => b.score - a.score);
+  const result = [];
+  customOrder.forEach(id => { const f = indexed.find(a=>a.id===id); if(f) result.push(f); });
+  indexed.forEach(a => { if(!result.find(r=>r.id===a.id)) result.push(a); });
+  return result;
+}
+
+function saveOrder() {
+  customOrder = assets.map(a=>a.id);
+  localStorage.setItem('opav_order', JSON.stringify(customOrder));
+}
+
+function moveAsset(id, dir) {
+  const idx = assets.findIndex(a=>a.id===id);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= assets.length) return;
+  const tmp = assets[idx]; assets[idx] = assets[newIdx]; assets[newIdx] = tmp;
+  saveOrder();
+  renderInventory();
+  renderRecommendations();
+}
   return Math.round(a.comercial*WEIGHTS.comercial + a.ventaja*WEIGHTS.ventaja + a.secreto*WEIGHTS.secreto + a.innovacion*WEIGHTS.innovacion + a.riesgo*WEIGHTS.riesgo + a.madurez*WEIGHTS.madurez);
 }
 function getPriority(s) { return s>=PRIORIDAD.critica?'Crítica':s>=PRIORIDAD.alta?'Alta':s>=PRIORIDAD.media?'Media':'Baja'; }
@@ -660,11 +686,22 @@ function renderInventory() {
         <span class="metric-mini">Riesgo rep.: <span>${a.riesgo}</span></span>
       </div>
       <div class="asset-actions">
+        <button class="action-btn" onclick="moveAsset('${a.id}',-1)" title="Subir">↑</button>
+        <button class="action-btn" onclick="moveAsset('${a.id}',1)" title="Bajar">↓</button>
         <button class="action-btn" onclick="showDetail('${a.id}')">Ver detalle</button>
         <button class="action-btn" onclick="editAsset('${a.id}')">Editar</button>
         <button class="action-btn danger" onclick="removeAsset('${a.id}')">Eliminar</button>
       </div>
     </div>`).join('');
+}
+
+function resetOrder() {
+  customOrder = [];
+  localStorage.removeItem('opav_order');
+  assets.sort((a,b) => b.score - a.score);
+  renderInventory();
+  renderRecommendations();
+  showToast('Orden restaurado por score');
 }
 
 function renderMatrix() {
