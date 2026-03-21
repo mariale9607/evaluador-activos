@@ -371,6 +371,10 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
     <div class="asset-list" id="asset-list">
       <div class="loading-screen"><div class="spinner"></div><span>Cargando inventario...</span></div>
     </div>
+    <div id="seed-banner" style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--paper-2);border-radius:10px;text-align:center;display:none;">
+      <p style="font-size:13px;color:var(--ink-mid);margin-bottom:0.75rem;">¿Primera vez? Carga el inventario inicial de Operadora Avícola Colombia.</p>
+      <button class="btn-primary" style="width:auto;padding:10px 24px;" onclick="cargarInventarioInicial()">Cargar inventario inicial — 20 activos</button>
+    </div>
   </div>
 
   <!-- MATRIZ -->
@@ -672,8 +676,12 @@ function renderInventory() {
 
   if (filtered.length === 0) {
     list.innerHTML = `<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">${assets.length === 0 ? 'No hay activos registrados aún.<br>Usa la pestaña "Registrar" para comenzar.' : 'No hay activos con esta prioridad.'}</div></div>`;
+    const banner = document.getElementById('seed-banner');
+    if (banner) banner.style.display = assets.length === 0 ? 'block' : 'none';
     return;
   }
+  const banner = document.getElementById('seed-banner');
+  if (banner) banner.style.display = 'none';
 
   list.innerHTML = filtered.map(a => `
     <div class="asset-card" data-id="${a.id}">
@@ -944,6 +952,47 @@ function generarSnapshotManual() {
 function showToast(msg) {
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function cargarInventarioInicial() {
+  if (!firebaseOk) { showToast('Sin conexión a Firebase'); return; }
+  if (!confirm('¿Cargar los 20 activos de Operadora Avícola Colombia?\nEsto solo debe hacerse UNA VEZ.')) return;
+
+  const fecha = new Date().toLocaleDateString('es-CO');
+  const seed = [
+    { nombre:'Marcas Friko, Pimpollo y Superpollo Paisa', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Marketing / Comercial', resp:'Dirección Comercial', desc:'Marcas insignia de OPAV con décadas de tradición y top of mind en Antioquia.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo propio', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:10, ventaja:10, secreto:2, innovacion:5, riesgo:8, madurez:9 },
+    { nombre:'Marca Campo Azul', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Retail / Comercial', resp:'Dirección Comercial', desc:'Canal de retail directo de OPAV que elimina intermediarios y captura datos de consumidores.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo propio', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:7, ventaja:8, secreto:3, innovacion:7, riesgo:6, madurez:8 },
+    { nombre:'Marca Lorenzano', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Marketing / Comercial', resp:'Dirección Comercial', desc:'Marca regional de carnes frías bajo la sombrilla de OPAV con lealtad de consumidor específica.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo propio', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:6, ventaja:6, secreto:2, innovacion:4, riesgo:7, madurez:8 },
+    { nombre:'Marca B-Getal', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Marketing / I+D', resp:'Dirección de Innovación', desc:'Primera marca flexitariana de OPAV orientada al consumidor consciente y a la tendencia de proteína alternativa.', trl:'TRL 7', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'No aplica', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:5, ventaja:7, secreto:2, innovacion:7, riesgo:7, madurez:5 },
+    { nombre:'Trade Dress — tiendas Campo Azul y empaques Friko', tipo:'Diseño Industrial', tecno:'Diseño industrial', area:'Marketing / Comercial', resp:'Dirección Comercial', desc:'Apariencia visual distintiva de tiendas Campo Azul y empaques Friko que el consumidor asocia con calidad. Sin protección formal actualmente.', trl:'TRL 9', protegido:'No', titularidad:'Desarrollo propio', nda:'No aplica', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:7, ventaja:7, secreto:3, innovacion:6, riesgo:9, madurez:5 },
+    { nombre:'Fórmulas nutricionales para aves', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'I+D / Nutrición', resp:'Dirección Técnica', desc:'Dietas específicas para aves desarrolladas con Contegral que optimizan el crecimiento y la tasa de conversión.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo en asociación con un tercero', nda:'Sí', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Pendiente de solicitud', derechos:'Parcialmente', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:9, ventaja:8, secreto:10, innovacion:7, riesgo:5, madurez:7 },
+    { nombre:'Genética avícola y protocolos de cría', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'I+D / Producción', resp:'Dirección Técnica', desc:'Conocimiento y protocolos para la cría de aves con mejor rendimiento, adaptados al contexto colombiano.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo en asociación con un tercero', nda:'Sí', acceso:'Parcialmente', acuerdopi:'Sí', estadoprot:'Pendiente de solicitud', derechos:'Parcialmente', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:8, ventaja:8, secreto:8, innovacion:6, riesgo:3, madurez:7 },
+    { nombre:'Proceso de congelación ultra rápida IQF', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'Producción / Planta de beneficio', resp:'Dirección de Operaciones', desc:'Proceso de congelación IQF que extiende la vida útil del producto sin conservantes químicos agresivos.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:7, ventaja:7, secreto:8, innovacion:6, riesgo:4, madurez:8 },
+    { nombre:'Proceso de empaque y extensión de vida útil', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'Producción / Empaque', resp:'Dirección de Operaciones', desc:'Proceso interno de empaque que extiende la vida útil del pollo sin conservantes, desarrollado en plantas de beneficio.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Parcialmente', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:6, ventaja:6, secreto:7, innovacion:5, riesgo:5, madurez:7 },
+    { nombre:'Software de monitoreo de granjas inteligentes', tipo:'Derechos de autor', tecno:'Software o sistema', area:'Tecnología / Operaciones', resp:'Dirección de Tecnología', desc:'Sistema de sensores e IA para controlar clima, consumo de alimento y salud de aves en tiempo real. Operativo en granjas de Titiribi y Cartago.', trl:'TRL 8', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:7, ventaja:7, secreto:8, innovacion:8, riesgo:5, madurez:6 },
+    { nombre:'Algoritmos de optimización logística', tipo:'Secreto industrial', tecno:'Software o sistema', area:'Logística / Operaciones', resp:'Dirección de Logística', desc:'Algoritmos de optimización para la distribución de producto fresco perecedero desde plantas hasta puntos de venta.', trl:'TRL 7', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:7, ventaja:6, secreto:7, innovacion:6, riesgo:5, madurez:5 },
+    { nombre:'Integración vertical con Grupo Bios', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'Dirección General', resp:'Gerencia General', desc:'Relación simbiótica con Contegral, Finca, Antillana y demás empresas del Grupo Bios que genera barreras de entrada únicas en Colombia.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo en asociación con un tercero', nda:'Sí', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Pendiente de solicitud', derechos:'Parcialmente', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:9, ventaja:10, secreto:6, innovacion:6, riesgo:2, madurez:10 },
+    { nombre:'Acuerdos preferenciales con grandes superficies', tipo:'Secreto industrial', tecno:'Base de datos con información valiosa', area:'Comercial / Ventas', resp:'Dirección Comercial', desc:'Acuerdos con Éxito, Cencosud, Pricesmart, D1 y Ara que garantizan acceso privilegiado a los principales canales del país.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:8, ventaja:8, secreto:7, innovacion:3, riesgo:3, madurez:9 },
+    { nombre:'Red de proveedores y granjeros integrados', tipo:'Secreto industrial', tecno:'Base de datos con información valiosa', area:'Operaciones / Abastecimiento', resp:'Dirección de Operaciones', desc:'Contratos y relaciones a largo plazo con granjeros integrados en puntos estratégicos del país.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:7, ventaja:7, secreto:5, innovacion:4, riesgo:2, madurez:9 },
+    { nombre:'Cultura de inocuidad y bioseguridad', tipo:'Secreto industrial', tecno:'Metodología o procedimiento', area:'Operaciones / Recursos Humanos', resp:'Dirección de Operaciones', desc:'Entrenamiento especializado de miles de empleados en bioseguridad y manejo de crisis sanitarias avícolas.', trl:'TRL 9', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Parcialmente', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:6, ventaja:7, secreto:6, innovacion:5, riesgo:2, madurez:7 },
+    { nombre:'Sello de Sostenibilidad Diamante — Fenavi', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Sostenibilidad', resp:'Dirección de Sostenibilidad', desc:'Certificación de más alto nivel de Fenavi que acredita los procesos más limpios del sector avícola colombiano.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo en asociación con un tercero', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:7, ventaja:8, secreto:2, innovacion:6, riesgo:5, madurez:9 },
+    { nombre:'Sello AA — Corantioquia', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Sostenibilidad / Ambiental', resp:'Dirección de Sostenibilidad', desc:'Certificación de cumplimiento ambiental superior por buenas prácticas en granjas y manejo de aguas y residuos.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo en asociación con un tercero', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:6, ventaja:6, secreto:2, innovacion:5, riesgo:4, madurez:9 },
+    { nombre:'Certificación bienestar animal en sacrificio', tipo:'Marca', tecno:'Símbolo o signo distintivo', area:'Sostenibilidad / Operaciones', resp:'Dirección de Operaciones', desc:'Única empresa en Colombia certificada en bienestar animal en el proceso de sacrificio.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo en asociación con un tercero', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:7, ventaja:10, secreto:2, innovacion:8, riesgo:4, madurez:9 },
+    { nombre:'Certificaciones HACCP e ISO', tipo:'Derechos de autor', tecno:'Metodología o procedimiento', area:'Calidad / Operaciones', resp:'Dirección de Calidad', desc:'Licencias técnicas para operar y exportar. Habilitan contratos con grandes clientes y acceso a mercados internacionales.', trl:'TRL 9', protegido:'Sí', titularidad:'Desarrollo en asociación con un tercero', nda:'No aplica', acceso:'Sí', acuerdopi:'Sí', estadoprot:'Protección solicitada', derechos:'Sí', otorgado:'No', contrato:'Sí', valorada:'No', metodo:'', comercial:7, ventaja:6, secreto:2, innovacion:4, riesgo:5, madurez:10 },
+    { nombre:'Patente — Bandeja receptáculo para alimentos', tipo:'Patente', tecno:'Diseño industrial', area:'I+D / Empaque', resp:'Dirección de Innovación', desc:'Receptáculo en forma de bandeja para contener de manera independiente diversos alimentos. Solicitud presentada el 20 de enero de 2020. Sin explotación comercial a la fecha.', trl:'TRL 6', protegido:'En proceso', titularidad:'Desarrollo propio', nda:'Sí', acceso:'Sí', acuerdopi:'No', estadoprot:'Pendiente de solicitud', derechos:'Sí', otorgado:'No', contrato:'No aplica', valorada:'No', metodo:'', comercial:3, ventaja:3, secreto:6, innovacion:7, riesgo:6, madurez:3 }
+  ];
+
+  showToast('Cargando activos...');
+  const promises = seed.map(a => {
+    a.score    = calcScore(a);
+    a.priority = getPriority(a.score);
+    a.fecha    = fecha;
+    return ref.push(a);
+  });
+
+  Promise.all(promises)
+    .then(() => showToast('✓ 20 activos cargados correctamente'))
+    .catch(err => showToast('Error al cargar: ' + err.message));
 }
 
 renderMatrix();
